@@ -1,0 +1,7 @@
+.venv
+.vscode
+__pycache__
+.DS_Store
+./*.DS_Store
+.pytest_cache
+poetry.lock

@@ -1,0 +1,120 @@
+[
+    {
+        "client_id": "012",
+        "country": "None",
+        "city": "None",
+        "user_agent": "None",
+        "sessions": [
+            {
+                "session_id": 1,
+                "requests": [
+                    {
+                        "request_id": 1.1,
+                        "request_time": "31/Mar/2017:05:00:56 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "client_id": "123",
+        "country": "France",
+        "city": "La_Rochelle",
+        "user_agent": "None",
+        "sessions": [
+            {
+                "session_id": 1,
+                "requests": [
+                    {
+                        "request_id": 1.1,
+                        "request_time": "30/Mar/2017:05:00:56 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    },
+                    {
+                        "request_id": 1.2,
+                        "request_time": "30/Mar/2017:05:01:50 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            },
+            {
+                "session_id": 2,
+                "requests": [
+                    {
+                        "request_id": 2.1,
+                        "request_time": "30/Mar/2017:07:03:50 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "client_id": "012",
+        "country": "None",
+        "city": "None",
+        "user_agent": "None",
+        "sessions": [
+            {
+                "session_id": 1,
+                "requests": [
+                    {
+                        "request_id": 1.1,
+                        "request_time": "31/Mar/2017:05:00:56 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "client_id": "123",
+        "country": "France",
+        "city": "La_Rochelle",
+        "user_agent": "None",
+        "sessions": [
+            {
+                "session_id": 1,
+                "requests": [
+                    {
+                        "request_id": 1.1,
+                        "request_time": "30/Mar/2017:05:00:56 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    },
+                    {
+                        "request_id": 1.2,
+                        "request_time": "30/Mar/2017:05:01:50 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            },
+            {
+                "session_id": 2,
+                "requests": [
+                    {
+                        "request_id": 2.1,
+                        "request_time": "30/Mar/2017:07:03:50 +0200",
+                        "request_url": "GET /rapport.html HTTP/1.0",
+                        "response_code": "200",
+                        "referer": "None"
+                    }
+                ]
+            }
+        ]
+    }
+]

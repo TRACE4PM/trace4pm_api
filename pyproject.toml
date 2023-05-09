@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "app"
+version = "0.1.0"
+description = ""
+authors = [
+    "Axel Gohier <axel.gohier@etudiant.univ-lr.fr>",
+    "Nannito Alcime <nannito.alcime@etudiant.univ-lr.fr>"
+    ]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "^3.11"
+fastapi = {extras = ["all"], version = "^0.95.1"}
+pymongo = "^4.3.3"
+pydantic = "^1.10.7"
+python-multipart = "^0.0.6"
+motor = "^3.1.2"
+aiofiles = "^23.1.0"
+
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+[tool.poetry.scripts]
+server = "uvicorn main:main --reload"

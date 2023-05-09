@@ -1,0 +1,46 @@
+{
+    "client_id": "",
+    "country": "",
+    "city": "",
+    "user_agent": "",
+    "sessions": [
+        {
+            "session_id": 1,
+            "requests": [
+                {
+                    "request_id": 1.1,
+                    "request_time": "",
+                    "request_url": "",
+                    "response_code": 200,
+                    "referer": ""
+                },
+                {
+                    "request_id": 1.2,
+                    "request_time": "",
+                    "request_url": "",
+                    "response_code": 200,
+                    "referer": ""
+                }
+            ]
+        },
+        {
+            "session_id": 2,
+            "requests": [
+                {
+                    "request_id": 2.1,
+                    "request_time": "",
+                    "request_url": "",
+                    "response_code": 200,
+                    "referer": ""
+                },
+                {
+                    "request_id": 2.2,
+                    "request_time": "",
+                    "request_url": "",
+                    "response_code": 200,
+                    "referer": ""
+                }
+            ]
+        }
+    ]
+}
