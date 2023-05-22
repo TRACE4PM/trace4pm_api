@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from api.routers import client, collection, files, request, tags, users
+from api.routers import client, collection, files, request, tags, users, stats
 
 app = FastAPI()
 
@@ -10,3 +10,4 @@ app.include_router(files.router)
 app.include_router(tags.router)
 app.include_router(client.router)
 app.include_router(request.router)
+app.include_router(stats.router)
