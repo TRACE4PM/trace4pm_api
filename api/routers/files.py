@@ -75,7 +75,7 @@ async def post_log_file(files: list[UploadFile], collection: str, username: str)
     for file in files:
         file_path = "log/"+file.filename
         # Write the file in the log directory
-        with open("log/"+file.filename, "wb") as f:
+        with open(file_path, "wb") as f:
             content = await file.read()
             f.write(content)
 
