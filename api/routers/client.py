@@ -17,7 +17,7 @@ async def get_clients(username: str, collection: str):
     clients = [client async for client in collection_db.find({}, { '_id':0,'client_id': 1, 'country': 1, 'city':1, 'user_agent':1 })]
     if not clients:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Client's log exists yet")
     return clients
 
 
@@ -29,50 +29,50 @@ async def get_client(username: str, collection: str, client_id: str):
     client = await collection_db.find_one({'client_id': client_id}, { '_id':0,'client_id': 1, 'country': 1, 'city':1, 'user_agent':1 })
     if not client:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No log exists yet for this client")
     return client
 
 
 # Get all clients for a specific country
-@router.get("/country/{country_name}", status_code=status.HTTP_200_OK)
+@router.get("/country/", status_code=status.HTTP_200_OK)
 async def get_clients_by_country(username: str, collection: str, country_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     clients = [client async for client in collection_db.find({'country': country_name}, { '_id':0,'client_id': 1, 'country': 1, 'city':1, 'user_agent':1 })]
     if not clients:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet for this country")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Client's log exists yet for this country")
     return clients
 
 # Get all clients for a specific city
-@router.get("/city/{city_name}", status_code=status.HTTP_200_OK)
+@router.get("/city/", status_code=status.HTTP_200_OK)
 async def get_clients_by_city(username: str, collection: str, city_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     clients = [client async for client in collection_db.find({'city': city_name}, { '_id':0,'client_id': 1, 'country': 1, 'city':1, 'user_agent':1 })]
     if not clients:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet for this city")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Client's log exists yet for this city")
     return clients
 
 # Get the number of clients for a specific country grouped by city
-@router.get("/stats/country/{country_name}", status_code=status.HTTP_200_OK)
+@router.get("/stats/country/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_grouped_by_city(username: str, collection: str, country_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     clients = [client async for client in collection_db.aggregate([{'$match': {'country': country_name}}, {'$group': {'_id': "$city", 'Total': { '$count': {}}}}, { '$sort': {'_id': 1}}])]
     if not clients:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet for this country")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Client's log exists yet for this country")
     return clients
 
 # Get the number of clients for a specific city
-@router.get("/stats/city/{city_name}", status_code=status.HTTP_200_OK)
+@router.get("/stats/city/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_for_a_city(username: str, collection: str, city_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     clients = [client async for client in collection_db.aggregate([{'$match': {'city': city_name}}, {'$count': 'Total'}])]
     if not clients:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No Client exists yet for this city")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No Client's log exists yet for this city")
     return clients[0]

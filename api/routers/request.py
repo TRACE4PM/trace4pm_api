@@ -10,7 +10,7 @@ router = APIRouter(
 
 
 # Get all client's requests
-@router.get("/{client_id}", status_code=status.HTTP_200_OK)
+@router.get("/", status_code=status.HTTP_200_OK)
 async def get_clients_requests(username: str, collection: str, client_id: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
@@ -22,11 +22,11 @@ async def get_clients_requests(username: str, collection: str, client_id: str):
 
 
 # Get all clients's requests for a country
-@router.get("/country/{country}", status_code=status.HTTP_200_OK)
-async def get_country_requests(username: str, collection: str, country: str):
+@router.get("/country/", status_code=status.HTTP_200_OK)
+async def get_country_requests(username: str, collection: str, country_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
-    requests = [request async for request in collection_db.find({'country': country}, {'_id': 0, 'client_id': 1, 'country': 1, 'city': 1, 'sessions': {'requests': 1}})]
+    requests = [request async for request in collection_db.find({'country': country_name}, {'_id': 0, 'client_id': 1, 'country': 1, 'city': 1, 'sessions': {'requests': 1}})]
     if not requests:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No Request found for this country")
@@ -34,11 +34,11 @@ async def get_country_requests(username: str, collection: str, country: str):
 
 
 # Get all clients's requests for a city
-@router.get("/city/{city}", status_code=status.HTTP_200_OK)
-async def get_city_requests(username: str, collection: str, city: str):
+@router.get("/city/", status_code=status.HTTP_200_OK)
+async def get_city_requests(username: str, collection: str, city_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
-    requests = [request async for request in collection_db.find({'city': city}, {'_id': 0, 'client_id': 1, 'city': 1, 'sessions': {'requests': 1}})]
+    requests = [request async for request in collection_db.find({'city': city_name}, {'_id': 0, 'client_id': 1, 'city': 1, 'sessions': {'requests': 1}})]
     if not requests:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No Request found for this city")
@@ -51,11 +51,15 @@ async def get_requests_by_date(username: str, collection: str, request_date: dat
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     date_format = "%Y-%m-%d:%H:%M:%S %z"
-    start_date = datetime.strptime(
-        str(request_date) + ':00:00:00 +0200', date_format)
-    end_date = datetime.strptime(
-        str(request_date) + ':23:59:59 +0200', date_format)
-    requests = [request async for request in collection_db.find({"sessions.requests.request_time": {'$gte': start_date, '$lte': end_date}}, {'_id': 0})]
+    try:
+        start_date = datetime.strptime(
+            str(request_date) + ':00:00:00 +0200', date_format)
+        end_date = datetime.strptime(
+            str(request_date) + ':23:59:59 +0200', date_format)
+        requests = [request async for request in collection_db.find({"sessions.requests.request_time": {'$gte': start_date, '$lte': end_date}}, {'_id': 0})]
+    except ValueError:
+        raise HTTPException(
+            status_code=status.HTTP_501_NOT_IMPLEMENTED, detail="Invalid date format")
     if not requests:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No Request found for this date")

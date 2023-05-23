@@ -12,7 +12,7 @@ router = APIRouter(
 )
 
 # Get the number of clients for a specific country grouped by city
-@router.get("/country/{country_name}", status_code=status.HTTP_200_OK)
+@router.get("/country/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_grouped_by_city(username: str, collection: str, country_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
@@ -23,7 +23,7 @@ async def get_number_of_clients_grouped_by_city(username: str, collection: str, 
     return clients
 
 # Get the number of clients for a specific city
-@router.get("/city/{city_name}", status_code=status.HTTP_200_OK)
+@router.get("/city/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_for_a_city(username: str, collection: str, city_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
@@ -34,7 +34,7 @@ async def get_number_of_clients_for_a_city(username: str, collection: str, city_
     return clients[0]
 
 # Get the number of request for a tag
-@router.get("/requests/{tag_name}", status_code=status.HTTP_200_OK)
+@router.get("/requests/", status_code=status.HTTP_200_OK)
 async def get_number_of_request_for_a_tag(username: str, collection: str, tag_name: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
@@ -43,7 +43,7 @@ async def get_number_of_request_for_a_tag(username: str, collection: str, tag_na
         {'$group': {'_id': "$sessions.requests.request_tag", 'Quantity': { '$count': {}}}},{ "$project": {"_id":0, "Request Type": "$_id", "Quantity": 1}}])]
     if not stat:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No statistique found for this tag")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No statistics found for this tag")
     return stat
 
 
@@ -105,7 +105,7 @@ async def get_client_trace(username: str, collection: str, client_id: str):
     ])]
     if not traces:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="No data found")
+            status_code=status.HTTP_404_NOT_FOUND, detail="No data found for this client")
     return traces
 
 async def get_traces(collection_db):

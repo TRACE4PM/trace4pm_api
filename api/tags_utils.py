@@ -1,5 +1,3 @@
-from database.config import collection_users_logs as users_logs
-
 
 def update_logs(logs, collection_db):
     for i, log in enumerate(logs):
