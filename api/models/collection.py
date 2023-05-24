@@ -1,4 +1,4 @@
-from api.base import Base_model
+from ..base import Base_model
 
 
 class Collection_Base_Model(Base_model):

@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from database.config import user_collection
+from .database.config import user_collection
 
 async def user_exists(username: str):
     if not await user_collection.find_one({"username": username}):

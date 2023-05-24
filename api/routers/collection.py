@@ -4,8 +4,8 @@ from datetime import datetime
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 
-from api.models.collection import *
-from database.config import database
+from ..models.collection import *
+from ..database.config import database
 
 router = APIRouter(
     prefix="/collection",

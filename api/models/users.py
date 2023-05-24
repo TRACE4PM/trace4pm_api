@@ -1,5 +1,5 @@
-from api.base import Base_model
-from api.models.collection import Collection_Model
+from ..base import Base_model
+from .collection import Collection_Model
 
 
 class User_Base_Model(Base_model):

@@ -1,5 +1,5 @@
-from api.base import Base_model
-from api.models.session import Session_Model
+from ..base import Base_model
+from ..models.session import Session_Model
 
 
 class Client_Base_Model(Base_model):

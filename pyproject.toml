@@ -4,7 +4,7 @@ version = "0.1.0"
 description = ""
 authors = [
     "Axel Gohier <axel.gohier@etudiant.univ-lr.fr>",
-    "Nannito Alcime <nannito.alcime@etudiant.univ-lr.fr>"
+    "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>"
     ]
 readme = "README.md"
 
@@ -17,6 +17,8 @@ pydantic = "^1.10.7"
 python-multipart = "^0.0.6"
 motor = "^3.1.2"
 aiofiles = "^23.1.0"
+httpx = "^0.24.1"
+trio = "^0.22.0"
 
 
 

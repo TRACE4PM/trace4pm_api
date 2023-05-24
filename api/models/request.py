@@ -1,4 +1,4 @@
-from api.base import Base_model
+from ..base import Base_model
 from decimal import Decimal
 from datetime import datetime
 

@@ -1,8 +1,8 @@
 from fastapi import APIRouter, HTTPException, status
-from api.models.client import Client_Get_Model
-from api.tags_utils import trace_handler
-from api.users_utils import user_exists
-from api.collection_utils import collection_exists
+from ..models.client import Client_Get_Model
+from ..tags_utils import trace_handler
+from ..users_utils import user_exists
+from ..collection_utils import collection_exists
 from heapq import nlargest
 from heapq import nsmallest
 

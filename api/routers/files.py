@@ -6,9 +6,9 @@ from fastapi import APIRouter, HTTPException, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse
 
-from api.routers.collection import get_collections_names
-from api.routers.users import get_user_by_username, get_users
-from database.config import database
+from .collection import get_collections_names
+from .users import get_user_by_username, get_users
+from ..database.config import database
 
 
 # Router to handle the logs

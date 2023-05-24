@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.responses import FileResponse
 from fastapi.encoders import jsonable_encoder
 
-from database.config import database
-from api.models.users import *
-from api.models.collection import *
+from ..database.config import database
+from ..models.users import *
+from ..models.collection import *
 from datetime import datetime
 
 router = APIRouter(

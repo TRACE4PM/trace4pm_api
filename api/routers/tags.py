@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
-from api.tags_utils import update_logs
-from api.users_utils import user_exists
-from api.collection_utils import collection_exists
+from ..tags_utils import update_logs
+from ..users_utils import user_exists
+from ..collection_utils import collection_exists
 
 router = APIRouter(
     prefix="/tags",

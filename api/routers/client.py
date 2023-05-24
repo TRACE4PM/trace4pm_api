@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
-from api.users_utils import user_exists
-from api.collection_utils import collection_exists
+from ..users_utils import user_exists
+from ..collection_utils import collection_exists
 
 router = APIRouter(
     prefix="/clients",
