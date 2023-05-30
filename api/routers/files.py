@@ -1,109 +1,168 @@
 import hashlib
+import json
 import os
+from parser.main import parser
+from parser.models.client import Client_Model
+from parser.models.parameters import Parameters
 
-# import aiofiles
-from fastapi import APIRouter, HTTPException, UploadFile, status
+from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import FileResponse
 
-from api.routers.collection import get_collections_names
-from api.routers.users import get_user_by_username, get_users
+from api.routers.collection import (
+    get_collection_from_name,
+    get_collections_names,
+    purge_collection,
+)
+from database.client import get_clients_from_collection, post_clients_in_collection
 from database.config import database
 
-
 # Router to handle the logs
-router = APIRouter(
-    prefix="/files",
-    tags=["files"]
-)
-
+router = APIRouter(prefix="/files", tags=["files"])
 
 user_collection = database.get_collection("users")
 
 
-# Function to get the list of hashed file in a collection
-# Return a list of hash
 async def get_hashed_files(username: str, collection: str) -> list[str]:
+    """Function to get the list of hashed file in a collection
+
+    Args:
+        username (str): username of the user
+        collection (str): name of the collection
+
+    Returns:
+        list[str]: list of hash
+    """
     hashes = await user_collection.find_one(
         {"username": username, "collections.name": collection},
-        {"collections.$": 1, "_id": 0})
+        {"collections.$": 1, "_id": 0},
+    )
     return hashes["collections"][0]["files_hash"]
 
 
-# Function to get the list of files in a directory
-# Return a list of files
-def get_file_in_dir(dir: str) -> list:
-    list_file = []
-    for file in os.listdir(dir):
-        if os.path.isfile(os.path.join(dir, file)):
-            list_file.append(file)
-    return list_file
+async def get_sha256(file: str):
+    """Function to get the SHA256 hash of a file
 
+    Args:
+        file (str): path of the file
 
-# A utility function that create hash SHA256 of a file
-async def compute_sha256(file_name):
+    Returns:
+        str: SHA256 hash of the file
+    """
+    # Initialize a new SHA-256 hash object
     hash_sha256 = hashlib.sha256()
-    with open(file_name, "rb") as f:
+    with open(file, "rb") as f:
         for chunk in iter(lambda: f.read(4096), b""):
             hash_sha256.update(chunk)
     return hash_sha256.hexdigest()
 
 
-# Route to send the log file to the server
-# Need a collection name(exist in database) and a user (exist in database and own the collection)
-# Need at least one file, can be more
-# Can hold a compression type (zip, tar, tar.gz, tar.bz2)
-# Return a success message with the status code 201
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def post_log_file(files: list[UploadFile], collection: str, username: str):
+    """Async route to send the log file to the server and add it to the collection(once parsed)
+
+
+    Args:
+        files (list[UploadFile]): A list of file to parse
+        collection (str): name of the collection
+        username (str): username of the user
+
+    Raises:
+        HTTPException: Username doesn't exist
+        HTTPException: Collection doesn't exist
+        HTTPException: No file provided
+        HTTPException: All files have already been parsed
+
+    Returns:
+        dict: A report of the files added to the collection
+        code: 201
+    """
     # Check if the user exist
     if not await user_collection.find_one({"username": username}):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist"
+        )
     # Check if the collection exist
     if collection not in await get_collections_names(username):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist"
+        )
     # Check if at least one file is provided
     if not files.__contains__:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided"
+        )
 
     coll = database.get_collection(collection)
     list_file_deleted = []
     list_file_write = []
+    tmp = Parameters(
+        parser_type="custom",
+        parser_format='%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
+    )
     for file in files:
-        file_path = "log/"+file.filename
-        # Write the file in the log directory
-        with open(file_path, "wb") as f:
-            content = await file.read()
-            f.write(content)
-
-        file_hash = await compute_sha256(file_path)
+        # Write the file in the directory
+        file_path = "temp/" + file.filename
+        with open(file_path, "wb") as buffer:
+            buffer.write(file.file.read())
         # check if file have already been parserd
-
+        file_hash = await get_sha256(file_path)
         if file_hash in await get_hashed_files(username, collection):
             list_file_deleted.append(file.filename)
-
         else:
+            # Parse the file
+
+            list_client = await get_clients_from_collection(coll)
+
+            list_client = await parser(
+                file=file_path, collection=list_client, parameters=tmp
+            )
+
+            # Remove the old clients from the collection
+            await purge_collection(collection)
+            # Add the client (old and new) to the collection
+            await post_clients_in_collection(list_client, coll)
+            os.remove(file_path)
+
+            # add the file to the hash list
             await user_collection.update_one(
                 {"username": username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}})
+                {"$push": {"collections.$.files_hash": file_hash}},
+            )
             list_file_write.append(file.filename)
-
-            # Parse the file
-            # await parser(file_path, coll)
-
-        # os.remove("log/"+file.filename)
 
     # If all files have already been parsed, return an error
     if not list_file_write:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="All files have already been parsed")
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="All files have already been parsed",
+        )
     # Else, return a report
     else:
         return {
             "message": "File(s) added to the collection",
             "files added to the collection": list_file_write,
-            "files already in the collection": list_file_deleted
+            "files already in the collection": list_file_deleted,
         }
+
+
+@router.get("/json", status_code=status.HTTP_200_OK)
+async def get_json_from_collection(collection: str):
+    """Function to get a json object from a collection
+
+    Args:
+        collection (str): collection name
+
+    Returns:
+        dict: json object
+    """
+    collection = await get_collection_from_name(collection)
+    json_obj = []
+    async for doc in collection.find({}, {"_id": 0}):
+        json_obj.append(json.loads(json.dumps(doc)))
+    # if json is empty, return an error
+    if not json_obj:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
+        )
+    return json_obj
