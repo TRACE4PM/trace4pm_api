@@ -1,11 +1,12 @@
+from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.params import Depends
-from typing import Annotated
-from api.security import get_current_active_user, get_password_hash
 
 from api.models.collection import *
 from api.models.users import *
+from api.security import get_current_active_user, get_password_hash
 from database.config import database
 
 router = APIRouter(prefix="/users", tags=["users"])

@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 
-from api.routers import token, client, collection, files, request, tags, users
+from api.routers import client, collection, files, request, tags, token, users
 from api.security import oauth2_scheme
 
 app = FastAPI()

@@ -1,23 +1,21 @@
-from fastapi import APIRouter
-from fastapi.security import OAuth2PasswordRequestForm
-from typing import Annotated
-from fastapi import Depends, HTTPException, status
 from datetime import timedelta
-from fastapi.encoders import jsonable_encoder
-from api.security import (
-    ACCESS_TOKEN_EXPIRE_MINUTES,
-    authenticate_user,
-    create_access_token,
-)
+from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordRequestForm
+
 from api.models.token import Token
+from api.security import authenticate_user, create_access_token
 
 router = APIRouter(
     prefix="/token",
     tags=["token"],
 )
+# Define the access token expiration time
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
-@router.post("/token")  # , response_model=Token)
+@router.post("/")  # , response_model=Token)
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):

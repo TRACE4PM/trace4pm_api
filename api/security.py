@@ -1,21 +1,19 @@
 from datetime import datetime, timedelta
 from typing import Annotated
-from api.models.users import User_inDB_Model, User_Model
-from fastapi import Depends, FastAPI, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from pydantic import BaseModel
-from database.config import database
-from api.models.token import Token, TokenData
 
+from api.models.token import TokenData
+from api.models.users import User_inDB_Model, User_Model
+from database.config import database
 
 # Define the secret key
 SECRET_KEY = "097a625b1090eda91a7f5474c780b2dc355d72e9b2e294fbc357a8a306189fd0"
 # Define the algorithm used to sign the JWT
 ALGORITHM = "HS256"
-# Define the access token expiration time
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
 # Define the password context
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 # Define the OAuth2 scheme, and the tokenUrl
