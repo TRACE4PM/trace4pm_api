@@ -141,7 +141,7 @@ async def get_traces(collection_db):
 async def get_clients_traces(username: str, collection: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
-    await get_traces(collection_db)
+    return await get_traces(collection_db)
 
 # Get unique trace number
 @router.get("/unique_trace/", status_code=status.HTTP_200_OK)
@@ -172,7 +172,7 @@ async def get_popularity_action(username: str, collection: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     trace_list = await get_traces(collection_db)
-    await get_popularity(trace_list)
+    return await get_popularity(trace_list)
 
 # Get most popular action
 @router.get("/most_popular_action/", status_code=status.HTTP_200_OK)
@@ -207,7 +207,6 @@ async def get_average_action(username: str, collection: str):
     await user_exists(username)
     collection_db = await collection_exists(username, collection)
     trace_len, unique_trace = await unique_trace_number(collection_db)
-    #return {"Average " : unique_trace/trace_len}
     return {"Average " : trace_len/unique_trace}
 
 # Get action's number
@@ -220,7 +219,7 @@ async def get_action_number(username: str, collection: str):
     for trace in trace_list:
         actions = trace.split(';')[1].split(',')
         cpt+=len(actions)
-    return cpt
+    return {"Action Number":cpt}
 
 
 # Get stat string

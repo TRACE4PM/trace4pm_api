@@ -19,6 +19,7 @@ motor = "^3.1.2"
 aiofiles = "^23.1.0"
 httpx = "^0.24.1"
 trio = "^0.22.0"
+anyio = "^3.7.0"
 
 
 
@@ -28,6 +29,9 @@ pytest = "^7.3.1"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+filterwarnings = ["ignore::trio.TrioDeprecationWarning"]
 
 
 [tool.poetry.scripts]
