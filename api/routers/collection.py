@@ -1,41 +1,47 @@
-import json
 from datetime import datetime
+from typing import Annotated
 
 from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
+from fastapi.params import Depends
 
+from ..collection_utils import get_all_collections, get_collections_names
+from ..database.config import database, user_collection
 from ..models.collection import *
-from ..database.config import user_collection, database
+from ..models.users import User_Model
+from ..security import get_current_active_user
 from ..users_utils import user_exists
-from ..collection_utils import get_collections_names, get_all_collections, get_collection_from_name
 
-router = APIRouter(
-    prefix="/collection",
-    tags=["collection"]
-)
+router = APIRouter(prefix="/collection", tags=["collection"])
 
 
 # Route to create a collection for a user
 # Create a collection in database
 # Return the collection created with the status code 201
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def create_collection(username: str, collection: Collection_Create_Model) -> Collection_Model:
+async def create_collection(
+    collection: Collection_Create_Model,
+    current_user: Annotated[User_Model, Depends(get_current_active_user)],
+) -> Collection_Model:
     collection.name = collection.name.lower()
     # check if user exist
-    await user_exists(username)
+    await user_exists(current_user.username)
     # Check if collection name already exist
-    if collection.name in await get_collections_names(username):
+    if collection.name in await get_collections_names(current_user.username):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection already exist, please choose another name")
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Collection already exist, please choose another name",
+        )
 
-    coll = Collection_Model(**collection.dict(),
-                            created_at=datetime.strftime(
-                                datetime.now(), "%d/%m/%Y %H:%M:%S"),
-                            files_hash=[])
+    coll = Collection_Model(
+        **collection.dict(),
+        created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
+        files_hash=[]
+    )
     # Add collection to user collections
     await user_collection.update_one(
-        {"username": username},
-        {"$push": {"collections": jsonable_encoder(coll)}}
+        {"username": current_user.username},
+        {"$push": {"collections": jsonable_encoder(coll)}},
     )
     # Create collection in database
     await database.create_collection(coll.name)
@@ -45,25 +51,31 @@ async def create_collection(username: str, collection: Collection_Create_Model) 
 # Route to get the list of collections in database
 # Return a list of collections with the status code 200
 @router.get("/", status_code=status.HTTP_200_OK)
-async def list_collections(username: str) -> list[Collection_Model]:
-    collections = await get_all_collections(username)
+async def list_collections(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> list[Collection_Model]:
+    collections = await get_all_collections(current_user.username)
     return collections
 
 
 # Route to delete a collection in database
 # Return a success message with the status code 200
 @router.delete("/", status_code=status.HTTP_200_OK)
-async def delete_collection(username: str, collection: str) -> dict:
+async def delete_collection(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)],
+    collection: str,
+) -> dict:
     # check if user exist
-    await user_exists(username)
+    await user_exists(current_user.username)
     collection = collection.lower()
-    if collection not in await get_collections_names(username):
+    if collection not in await get_collections_names(current_user.username):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist"
+        )
     # Delete collection from user collections
     await user_collection.update_one(
-        {"username": username},
-        {"$pull": {"collections": {"name": collection}}}
+        {"username": current_user.username},
+        {"$pull": {"collections": {"name": collection}}},
     )
     # Delete collection for database
     database.drop_collection(collection)
@@ -79,14 +91,3 @@ async def purge_collection(collection: str) -> dict:
     # Delete all documents in collection
     await database[collection].delete_many({})
     return {"Success": "Collection purged successfully"}
-
-
-# Function to make json files from collection
-# Return a json object
-@router.get("/json", status_code=status.HTTP_200_OK)
-async def get_json_from_collection(collection: str):
-    collection_db = await get_collection_from_name(collection)
-    json_obj = []
-    async for doc in collection_db.find({}, {"_id": 0}):
-        json_obj.append(json.loads(json.dumps(doc)))
-    return json_obj

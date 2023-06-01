@@ -1,41 +1,60 @@
 # import aiofiles
-from fastapi import APIRouter, HTTPException, UploadFile, status
-from fastapi.encoders import jsonable_encoder
-from fastapi.responses import FileResponse
+import json
+import os
+from parser.main import parser
+from parser.models.parameters import Parameters
+from typing import Annotated
 
-from ..database.config import user_collection
-from ..users_utils import user_exists
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
+
 from ..collection_utils import collection_exists, get_hashed_files
+from ..database.client import get_clients_from_collection, post_clients_in_collection
+from ..database.config import user_collection
+from ..models.users import User_Model
+from ..security import get_current_active_user
+from ..users_utils import user_exists
 from ..utils import compute_sha256
-
+from .collection import purge_collection
 
 # Router to handle the logs
-router = APIRouter(
-    prefix="/files",
-    tags=["files"]
-)
+router = APIRouter(prefix="/files", tags=["files"])
 
 
-# Route to send the log file to the server
-# Need a collection name(exist in database) and a user (exist in database and own the collection)
-# Need at least one file, can be more
-# Can hold a compression type (zip, tar, tar.gz, tar.bz2)
-# Return a success message with the status code 201
 @router.post("/", status_code=status.HTTP_201_CREATED)
-async def post_log_file(files: list[UploadFile], collection: str, username: str):
+async def post_log_file(
+    files: list[UploadFile],
+    collection: str,
+    current_user: Annotated[User_Model, Depends(get_current_active_user)],
+):
+    """Route to send logs files to the server and add it to the collection(once parsed)
+
+
+    Args:
+        files (list[UploadFile]): A list of file to parse
+        collection (str): name of the collection
+
+    Returns:
+        dict: A report of the files added to the collection
+        code: 201
+    """
     # Check if the user exist
-    await user_exists(username)
+    await user_exists(current_user.username)
     # Check if the collection exist
-    collection_db = await collection_exists(username, collection)
+    collection_db = await collection_exists(current_user.username, collection)
     # Check if at least one file is provided
     if not files.__contains__:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided")
-    
+            status_code=status.HTTP_400_BAD_REQUEST, detail="No file provided"
+        )
+
     list_file_deleted = []
     list_file_write = []
+    tmp = Parameters(
+        parser_type="custom",
+        parser_format='%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
+    )
     for file in files:
-        file_path = "log/"+file.filename
+        file_path = "temp/" + file.filename  # type: ignore
         # Write the file in the log directory
         with open(file_path, "wb") as f:
             content = await file.read()
@@ -44,28 +63,66 @@ async def post_log_file(files: list[UploadFile], collection: str, username: str)
         file_hash = await compute_sha256(file_path)
 
         # check if file have already been parsed
-        if file_hash in await get_hashed_files(username, collection):
+        if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(file.filename)
-
         else:
-            await user_collection.update_one(
-                {"username": username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}})
-            list_file_write.append(file.filename)
-
             # Parse the file
-            # await parser(file_path, coll)
 
-        # os.remove("log/"+file.filename)
+            list_client = await get_clients_from_collection(collection_db)
+
+            list_client = await parser(
+                file=file_path, collection=list_client, parameters=tmp  # type: ignore
+            )
+
+            # Remove the old clients from the collection
+            await purge_collection(collection)
+            # Add the client (old and new) to the collection
+            await post_clients_in_collection(list_client, collection_db)  # type: ignore
+            os.remove(file_path)
+
+            # add the file to the hash list
+            await user_collection.update_one(
+                {"username": current_user.username, "collections.name": collection},
+                {"$push": {"collections.$.files_hash": file_hash}},
+            )
+            list_file_write.append(file.filename)
 
     # If all files have already been parsed, return an error
     if not list_file_write:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="All files have already been parsed")
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="All files have already been parsed",
+        )
     # Else, return a report
     else:
         return {
             "message": "File(s) added to the collection",
             "files added to the collection": list_file_write,
-            "files already in the collection": list_file_deleted
+            "files already in the collection": list_file_deleted,
         }
+
+
+@router.get("/json", status_code=status.HTTP_200_OK)
+async def get_json_from_collection(
+    collection: str,
+    current_user: Annotated[User_Model, Depends(get_current_active_user)],
+):
+    """Function to get a json object from a collection
+
+    Args:
+        collection (str): collection name
+
+    Returns:
+        dict: json object
+    """
+    # Check if the collection exist
+    collection_db = collection_exists(current_user.username, collection)
+    json_obj = []
+    async for doc in collection_db.find({}, {"_id": 0}):  # type: ignore
+        json_obj.append(json.loads(json.dumps(doc)))
+    # if json is empty, return an error
+    if not json_obj:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
+        )
+    return json_obj

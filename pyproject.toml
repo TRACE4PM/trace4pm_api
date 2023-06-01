@@ -20,11 +20,14 @@ aiofiles = "^23.1.0"
 httpx = "^0.24.1"
 trio = "^0.22.0"
 anyio = "^3.7.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+pytest = "^7.3.1"
+parser = {git = "git@gitlab.univ-lr.fr:trace_clustering/services/parser.git"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 
 
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.3.1"
 
 [build-system]
 requires = ["poetry-core"]

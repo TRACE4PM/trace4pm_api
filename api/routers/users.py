@@ -1,21 +1,26 @@
+from typing import Annotated
+
 from fastapi import APIRouter, HTTPException, status
-from fastapi.responses import FileResponse
 from fastapi.encoders import jsonable_encoder
+from fastapi.params import Depends
 
 from ..database.config import user_collection
-from ..models.users import *
 from ..models.collection import *
-from datetime import datetime
+from ..models.users import *
+from ..security import get_current_active_user, get_password_hash
 
-router = APIRouter(
-    prefix="/users",
-    tags=["users"]
-)
+router = APIRouter(prefix="/users", tags=["users"])
+
+
+@router.get("/me/", response_model=User_Model)
+async def read_users_me(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+):
+    return current_user
+
 
 # Route to get the list of users
 # Return a list of User_Model objects
-
-
 @router.get("/")
 async def get_users() -> list[User_Model]:
     list_users = []
@@ -31,8 +36,15 @@ async def create_user(user: User_Create_Model) -> User_Model:
     user.username = user.username.lower()
     if await user_collection.find_one({"username": user.username}):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Username already exist, please choose another username")
-    usr = User_Model(**user.dict())
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already exist, please choose another username",
+        )
+    hash_pwd = get_password_hash(user.plain_password)
+    usr = User_inDB_Model(
+        username=user.username,
+        firstname=user.firstname,
+        hashed_password=hash_pwd,
+    )
     user_collection.insert_one(jsonable_encoder(usr))
     return usr
 
@@ -43,17 +55,7 @@ async def create_user(user: User_Create_Model) -> User_Model:
 async def delete_user(username: str) -> dict:
     if not (await user_collection.find_one({"username": username})):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist"
+        )
     user_collection.delete_one({"username": username})
     return {"message": "User deleted successfully"}
-
-
-# Route to get a user by his username
-# Return a User_Model object
-@router.get("/{username}", status_code=status.HTTP_200_OK)
-async def get_user_by_username(username: str) -> User_Model:
-    usr = await user_collection.find_one({"username": username})
-    if not usr:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
-    return usr
