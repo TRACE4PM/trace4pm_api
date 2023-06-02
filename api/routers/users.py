@@ -4,10 +4,12 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.params import Depends
 
+from ..collection_utils import get_collections_names
 from ..database.config import user_collection
 from ..models.collection import *
 from ..models.users import *
 from ..security import get_current_active_user, get_password_hash
+from .collection import delete_collection
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -26,6 +28,10 @@ async def get_users() -> list[User_Model]:
     list_users = []
     async for usr in user_collection.find({}, {"_id": 0}):
         list_users.append(usr)
+    if not list_users:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No users found"
+        )
     return list_users
 
 
@@ -51,11 +57,16 @@ async def create_user(user: User_Create_Model) -> User_Model:
 
 # Route to delete a user
 # Return a success message with the status code 200
-@router.delete("/{username}", status_code=status.HTTP_200_OK)
-async def delete_user(username: str) -> dict:
-    if not (await user_collection.find_one({"username": username})):
+@router.delete("/me", status_code=status.HTTP_200_OK)
+async def delete_user(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> dict:
+    if not (await user_collection.find_one({"username": current_user.username})):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist"
         )
-    user_collection.delete_one({"username": username})
+    list_collection = await get_collections_names(current_user.username)
+    for coll in list_collection:
+        await delete_collection(current_user, coll)
+    user_collection.delete_one({"username": current_user.username})
     return {"message": "User deleted successfully"}

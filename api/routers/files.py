@@ -116,7 +116,7 @@ async def get_json_from_collection(
         dict: json object
     """
     # Check if the collection exist
-    collection_db = collection_exists(current_user.username, collection)
+    collection_db = await collection_exists(current_user.username, collection)
     json_obj = []
     async for doc in collection_db.find({}, {"_id": 0}):  # type: ignore
         json_obj.append(json.loads(json.dumps(doc)))
