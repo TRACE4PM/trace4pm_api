@@ -48,3 +48,11 @@ async def get_hashed_files(username: str, collection: str) -> list[str]:
         {"collections.$": 1, "_id": 0})
     return hashes["collections"][0]["files_hash"]
 
+async def purge_collection(collection_db):
+    """Function to purge a collection in database
+    Args:
+        collection (collection_object): A collection object
+    """
+
+    await collection_db.delete_many({})
+

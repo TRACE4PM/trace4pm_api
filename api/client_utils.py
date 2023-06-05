@@ -19,7 +19,7 @@ async def get_clients_from_collection(collection) -> list[Client_Model]:
 
 
 async def post_clients_in_collection(
-    list_clients: list[Client_Model], collection
+    list_clients: list[Client_Model], collection_db
 ) -> None:
     """Function to post a list of clients in a collection(database)
 
@@ -27,4 +27,4 @@ async def post_clients_in_collection(
         list_clients (list[Client_Model]): list of clients to post in the collection
         collection (collection_object): collection(database) to post the clients in
     """
-    await collection.insert_many(jsonable_encoder(list_clients))
+    await collection_db.insert_many(jsonable_encoder(list_clients))

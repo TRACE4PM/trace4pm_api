@@ -8,7 +8,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, status
 
 from ..collection_utils import collection_exists, get_hashed_files
-from ..database.client import get_clients_from_collection, post_clients_in_collection
+from ..client_utils import get_clients_from_collection, post_clients_in_collection
 from ..database.config import user_collection
 from ..models.users import User_Model
 from ..security import get_current_active_user
