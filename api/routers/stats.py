@@ -1,4 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Annotated
+from ..models.users import User_Model
+from ..security import get_current_active_user
 from parser.models.client import Client_Get_Model
 from ..tags_utils import trace_handler
 from ..users_utils import user_exists
@@ -12,10 +15,8 @@ router = APIRouter(prefix="/stats", tags=["stats"])
 # Get the number of clients for a specific country grouped by city
 @router.get("/country/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_grouped_by_city(
-    username: str, collection: str, country_name: str
-):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection: str, country_name: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     clients = [
         client
         async for client in collection_db.aggregate(
@@ -37,10 +38,8 @@ async def get_number_of_clients_grouped_by_city(
 # Get the number of clients for a specific city
 @router.get("/city/", status_code=status.HTTP_200_OK)
 async def get_number_of_clients_for_a_city(
-    username: str, collection: str, city_name: str
-):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection: str, city_name: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     clients = [
         client
         async for client in collection_db.aggregate(
@@ -58,10 +57,8 @@ async def get_number_of_clients_for_a_city(
 # Get the number of request for a tag
 @router.get("/requests/", status_code=status.HTTP_200_OK)
 async def get_number_of_request_for_a_tag(
-    username: str, collection: str, tag_name: str
-):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection: str, tag_name: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     stat = [
         stat
         async for stat in collection_db.aggregate(
@@ -89,9 +86,8 @@ async def get_number_of_request_for_a_tag(
 
 # Get the number of requests grouped by tag
 @router.get("/requests/group_tag/", status_code=status.HTTP_200_OK)
-async def get_requests_grouped_by_tag(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_requests_grouped_by_tag(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     stat = [
         stat
         async for stat in collection_db.aggregate(
@@ -117,9 +113,8 @@ async def get_requests_grouped_by_tag(username: str, collection: str):
 
 # Count the number of requests that appear a specific amount of time
 @router.get("/requests/request_count/", status_code=status.HTTP_200_OK)
-async def get_number_of_request(username: str, collection: str, quantity: int):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_number_of_request(collection: str, quantity: int, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     stat = [
         stat
         async for stat in collection_db.aggregate(
@@ -147,9 +142,8 @@ async def get_number_of_request(username: str, collection: str, quantity: int):
 
 # Get a specific client's traces
 @router.get("/client_trace/", status_code=status.HTTP_200_OK)
-async def get_client_trace(username: str, collection: str, client_id: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_client_trace(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     traces = [
         trace_handler(trace)
         async for trace in collection_db.aggregate(
@@ -213,17 +207,15 @@ async def get_traces(collection_db):
 
 # Get all clients's traces
 @router.get("/clients_traces/", status_code=status.HTTP_200_OK)
-async def get_clients_traces(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_clients_traces(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     return await get_traces(collection_db)
 
 
 # Get unique trace number
-@router.get("/unique_trace/", status_code=status.HTTP_200_OK)
-async def get_unique_trace_number(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+@router.get("/unique_action/", status_code=status.HTTP_200_OK)
+async def get_unique_action_number(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_list = await get_traces(collection_db)
     unique_trace = list()
     for trace in trace_list:
@@ -246,9 +238,8 @@ async def get_popularity(trace_list):
 
 # Get popularity action
 @router.get("/popularity_action/", status_code=status.HTTP_200_OK)
-async def get_popularity_action(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_popularity_action(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_list = await get_traces(collection_db)
     return await get_popularity(trace_list)
 
@@ -256,10 +247,8 @@ async def get_popularity_action(username: str, collection: str):
 # Get most popular action
 @router.get("/most_popular_action/", status_code=status.HTTP_200_OK)
 async def get_most_popular_action(
-    username: str, collection: str, number: int | None = 5
-):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)], number: int | None = 5):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_list = await get_traces(collection_db)
     popularity = await get_popularity(trace_list)
     return nlargest(number, popularity, key=popularity.get)
@@ -268,10 +257,9 @@ async def get_most_popular_action(
 # Get less popular action
 @router.get("/less_popular_action/", status_code=status.HTTP_200_OK)
 async def get_less_popular_action(
-    username: str, collection: str, number: int | None = 5
+    collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)], number: int | None = 5
 ):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection_db = await collection_exists(current_user.username, collection)
     trace_list = await get_traces(collection_db)
     popularity = await get_popularity(trace_list)
     return nsmallest(number, popularity, key=popularity.get)
@@ -289,18 +277,16 @@ async def unique_trace_number(collection_db):
 
 # Get average action
 @router.get("/average_action/", status_code=status.HTTP_200_OK)
-async def get_average_action(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_average_action(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_len, unique_trace = await unique_trace_number(collection_db)
     return {"Average ": trace_len / unique_trace}
 
 
 # Get action's number
 @router.get("/action_number/", status_code=status.HTTP_200_OK)
-async def get_action_number(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_action_number(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_list = await get_traces(collection_db)
     cpt = 0
     for trace in trace_list:
@@ -311,9 +297,8 @@ async def get_action_number(username: str, collection: str):
 
 # Get stat string
 @router.get("/stat_string/", status_code=status.HTTP_200_OK)
-async def get_stat_string(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_stat_string(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     trace_len, unique_trace = await unique_trace_number(collection_db)
     average = trace_len / unique_trace
     return {

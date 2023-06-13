@@ -1,6 +1,8 @@
 from datetime import date, datetime
-
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Annotated
+from ..models.users import User_Model
+from ..security import get_current_active_user
 
 from ..collection_utils import collection_exists
 from ..users_utils import user_exists
@@ -10,9 +12,8 @@ router = APIRouter(prefix="/requests", tags=["requests"])
 
 # Get all client's requests
 @router.get("/", status_code=status.HTTP_200_OK)
-async def get_clients_requests(username: str, collection: str, client_id: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_clients_requests(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     requests = [
         request
         async for request in collection_db.find(
@@ -30,9 +31,8 @@ async def get_clients_requests(username: str, collection: str, client_id: str):
 
 # Get all clients's requests for a country
 @router.get("/country/", status_code=status.HTTP_200_OK)
-async def get_country_requests(username: str, collection: str, country_name: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_country_requests(collection: str, country_name: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     requests = [
         request
         async for request in collection_db.find(
@@ -56,9 +56,8 @@ async def get_country_requests(username: str, collection: str, country_name: str
 
 # Get all clients's requests for a city
 @router.get("/city/", status_code=status.HTTP_200_OK)
-async def get_city_requests(username: str, collection: str, city_name: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_city_requests(collection: str, city_name: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     requests = [
         request
         async for request in collection_db.find(
@@ -76,9 +75,8 @@ async def get_city_requests(username: str, collection: str, city_name: str):
 
 # Get all requests for a specific date
 @router.get("/req_date/", status_code=status.HTTP_200_OK)
-async def get_requests_by_date(username: str, collection: str, request_date: date):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def get_requests_by_date(collection: str, request_date: date, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     date_format = "%Y-%m-%d:%H:%M:%S %z"
     try:
         start_date = datetime.strptime(
@@ -112,10 +110,8 @@ async def get_requests_by_date(username: str, collection: str, request_date: dat
 # Get all requests for a specific date interval
 @router.get("/date_interval/", status_code=status.HTTP_200_OK)
 async def get_requests_by_date_interval(
-    username: str, collection: str, start_date: date, end_date: date
-):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+    collection: str, start_date: date, end_date: date, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     date_format = "%Y-%m-%d:%H:%M:%S %z"
     start_date = datetime.strptime(str(start_date) + ":00:00:00 +0200", date_format)
     end_date = datetime.strptime(str(end_date) + ":23:59:59 +0200", date_format)

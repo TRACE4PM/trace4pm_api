@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException, status
-from ..users_utils import user_exists
+from fastapi import APIRouter, HTTPException, status, Depends
+from typing import Annotated
+from ..models.users import User_Model
+from ..security import get_current_active_user
 from ..collection_utils import collection_exists
 from ..tags_utils import load_tag_config, save_tagged_logs
 from ..database.config import tag_config
@@ -12,9 +14,8 @@ router = APIRouter(
 
 # Apply tagging for each request_url and save them to db
 @router.get("/generate", status_code=status.HTTP_200_OK)
-async def generate_tags(username: str, collection: str):
-    await user_exists(username)
-    collection_db = await collection_exists(username, collection)
+async def generate_tags(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
     clients = [client async for client in collection_db.find({},{'_id':0})]
     if not clients:
         raise HTTPException(
