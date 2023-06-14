@@ -36,7 +36,7 @@ async def get_country_requests(collection: str, country_name: str, current_user:
     requests = [
         request
         async for request in collection_db.find(
-            {"country": country_name},
+            {"country": {'$regex': country_name, "$options": "i" }},
             {
                 "_id": 0,
                 "client_id": 1,
@@ -61,7 +61,7 @@ async def get_city_requests(collection: str, city_name: str, current_user: Annot
     requests = [
         request
         async for request in collection_db.find(
-            {"city": city_name},
+            {"city": {'$regex': city_name, "$options": "i" }},
             {"_id": 0, "client_id": 1, "city": 1, "sessions": {"requests": 1}},
         )
     ]
