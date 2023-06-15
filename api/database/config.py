@@ -7,4 +7,3 @@ client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 database = client.trace_logs
 
 user_collection = database.get_collection("users")
-tag_config = database.get_collection("test_tag")
