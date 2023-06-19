@@ -77,12 +77,14 @@ async def get_city_requests(collection: str, city_name: str, current_user: Annot
 @router.get("/req_date/", status_code=status.HTTP_200_OK)
 async def get_requests_by_date(collection: str, request_date: date, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
     collection_db = await collection_exists(current_user.username, collection)
-    date_format = "%Y-%m-%d:%H:%M:%S %z"
+    date_format = "%Y-%m-%d %H:%M:%S%z"
     try:
         start_date = datetime.strptime(
-            str(request_date) + ":00:00:00 +0200", date_format
+            str(request_date) + " 00:00:00+02:00", date_format
         )
-        end_date = datetime.strptime(str(request_date) + ":23:59:59 +0200", date_format)
+        end_date = datetime.strptime(str(request_date) + " 23:59:59+02:00", date_format)
+        start_date = start_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+        end_date = end_date.strftime("%Y-%m-%dT%H:%M:%S%z")
         requests = [
             request
             async for request in collection_db.find(
@@ -112,9 +114,11 @@ async def get_requests_by_date(collection: str, request_date: date, current_user
 async def get_requests_by_date_interval(
     collection: str, start_date: date, end_date: date, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
     collection_db = await collection_exists(current_user.username, collection)
-    date_format = "%Y-%m-%d:%H:%M:%S %z"
-    start_date = datetime.strptime(str(start_date) + ":00:00:00 +0200", date_format)
-    end_date = datetime.strptime(str(end_date) + ":23:59:59 +0200", date_format)
+    date_format = "%Y-%m-%d %H:%M:%S%z"
+    start_date = datetime.strptime(str(start_date) + " 00:00:00+0200", date_format)
+    end_date = datetime.strptime(str(end_date) + " 23:59:59+0200", date_format)
+    start_date = start_date.strftime("%Y-%m-%dT%H:%M:%S%z")
+    end_date = end_date.strftime("%Y-%m-%dT%H:%M:%S%z")
     requests = [
         request
         async for request in collection_db.find(

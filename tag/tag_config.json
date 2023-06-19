@@ -1,0 +1,327 @@
+[
+  {
+    "tag_name": "HomePage",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "/accueil/",
+        "second_keyword": "und",
+        "alternate_tag": "CollectionNavigation"
+      },
+      {
+        "number": 2,
+        "first_keyword": "und",
+        "second_keyword": "blog",
+        "alternate_tag": "AccessGallicaBlog"
+      },
+      {
+        "number": 2,
+        "first_keyword": "/accueil/",
+        "second_keyword": "AdvancedSearch",
+        "alternate_tag": "AdvancedSearch"
+      },
+      {
+        "number": 2,
+        "first_keyword": "/accueil/",
+        "second_keyword": "sru",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 2,
+        "first_keyword": "/accueil/",
+        "second_keyword": "search",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 2,
+        "first_keyword": "/accueil/",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 1,
+        "first_keyword": "/accueil/"
+      }
+    ]
+  },
+  {
+    "tag_name": "AccessGallicaBlog",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "blog",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "blog",
+        "second_keyword": "und",
+        "alternate_tag": "CollectionNavigation"
+      },
+      {
+        "number": 1,
+        "first_keyword": "blog"
+      }
+    ]
+  },
+  {
+    "tag_name": "AdvancedSearch",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "advancedSearch",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "advancedSearch",
+        "second_keyword": "search",
+        "alternate_tag": "AdvancedSearch"
+      },
+      {
+        "number": 2,
+        "first_keyword": "advanced",
+        "second_keyword": "search",
+        "alternate_tag": "AdvancedSearch"
+      }
+    ]
+  },
+  {
+    "tag_name": "GallicaSearchEngine",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "sru",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "search",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "sru",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 2,
+        "first_keyword": "search",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 1,
+        "first_keyword": "sru"
+      },
+      {
+        "number": 1,
+        "first_keyword": "SRU"
+      },
+      {
+        "number": 2,
+        "first_keyword": "search",
+        "second_keyword": "und",
+        "alternate_tag": "CollectionNavigation"
+      },
+      {
+        "number": 2,
+        "first_keyword": "Search",
+        "second_keyword": "lang",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 1,
+        "first_keyword": "Refinement"
+      },
+      {
+        "number": 1,
+        "first_keyword": "Search"
+      },
+      {
+        "number": 1,
+        "first_keyword": "search"
+      }
+    ]
+  },
+  {
+    "tag_name": "ViewingRessource",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "statistic",
+        "alternate_tag": "ResearchReportExtraction"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "detail",
+        "alternate_tag": "ResearchReportExtraction"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "snippet",
+        "alternate_tag": "ResearchReportExtraction"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "status",
+        "alternate_tag": "ResearchReportExtraction"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "sru",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "search",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 1,
+        "first_keyword": "ark"
+      },
+      {
+        "number": 1,
+        "first_keyword": "RequestDigitalElement"
+      },
+      {
+        "number": 1,
+        "first_keyword": "dossiers"
+      }
+    ]
+  },
+  {
+    "tag_name": "DownloadRessource",
+    "conditions": [
+      {
+        "number": 1,
+        "first_keyword": "download"
+      }
+    ]
+  },
+  {
+    "tag_name": "ResearchReportExtraction",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "statistic",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 2,
+        "first_keyword": "detail",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 2,
+        "first_keyword": "snippet",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 2,
+        "first_keyword": "status",
+        "second_keyword": "ark",
+        "alternate_tag": "ViewingRessource"
+      },
+      {
+        "number": 1,
+        "first_keyword": "statistic"
+      },
+      {
+        "number": 1,
+        "first_keyword": "detail"
+      },
+      {
+        "number": 1,
+        "first_keyword": "snippet"
+      },
+      {
+        "number": 1,
+        "first_keyword": "status"
+      }
+    ]
+  },
+  {
+    "tag_name": "CollectionNavigation",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "und",
+        "second_keyword": "/accueil/",
+        "alternate_tag": "HomePage"
+      },
+      {
+        "number": 2,
+        "first_keyword": "und",
+        "second_keyword": "search",
+        "alternate_tag": "GallicaSearchEngine"
+      },
+      {
+        "number": 2,
+        "first_keyword": "und",
+        "second_keyword": "blog",
+        "alternate_tag": "AccessGallicaBlog"
+      },
+      {
+        "number": 1,
+        "first_keyword": "und"
+      },
+      {
+        "number": 1,
+        "first_keyword": "livres"
+      },
+      {
+        "number": 1,
+        "first_keyword": "cartes"
+      },
+      {
+        "number": 1,
+        "first_keyword": "enregistrements-sonores"
+      },
+      {
+        "number": 1,
+        "first_keyword": "essentiels"
+      },
+      {
+        "number": 1,
+        "first_keyword": "presse-et-revues"
+      },
+      {
+        "number": 1,
+        "first_keyword": "lang"
+      }
+    ]
+  },
+  {
+    "tag_name": "OCRTextExtraction",
+    "conditions": [
+      {
+        "number": 2,
+        "first_keyword": "ark",
+        "second_keyword": "texteImage",
+        "alternate_tag": "OCRTextExtraction"
+      }
+    ]
+  }
+]
