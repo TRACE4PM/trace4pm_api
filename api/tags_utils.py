@@ -13,6 +13,21 @@ def trace_handler(trace):
             req += ","
     return f"{trace['client_id']};{req}"
 
+def trace_handler_action(trace):
+    clients_action = list()
+    requests = trace["sessions"]["requests"]
+    client_id = trace['client_id']+"-"+str(trace["sessions"]["session_id"])
+    clients_action = [do_action(client_id, request) for request in requests]
+    return clients_action
+
+def do_action(client_id, request):
+    action_row = list()
+    #action_row.append(";".join([client_id, request["request_tag"], request["request_time"]]))
+    action_row.append(client_id)
+    action_row.append(request["request_tag"])
+    action_row.append(request["request_time"])
+    return action_row
+
 async def load_tag_config(collection_db):
     tags_config = [tag async for tag in collection_db.find({},{'_id':0})]
     if not tags_config:

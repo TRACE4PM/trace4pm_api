@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, status, Depends
+from fastapi.responses import FileResponse
 from typing import Annotated
 from ..models.users import User_Model
 from ..security import get_current_active_user
@@ -255,6 +256,17 @@ async def get_stat_trace_string(collection: str, current_user: Annotated[User_Mo
         "Unique": unique_trace.__str__(),
         "Average": average.__str__(),
     }
+
+# Get all clients's actions
+#@router.get("/clients_actions/", status_code=status.HTTP_200_OK, description="Return all clients's actions in a csv file")
+@router.get("/clients_actions/", status_code=status.HTTP_200_OK, response_class=FileResponse, description="Return all clients's actions in a csv file")
+async def get_clients_actions(collection: str, filename: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    collection_db = await collection_exists(current_user.username, collection)
+    clients_action = await get_clients_action(collection_db)
+    csv_file = await create_csv_file(clients_action,filename)
+    response = FileResponse(csv_file, media_type="text/csv")
+    response.headers["Content-Disposition"] = f"attachment; filename={filename}.csv"
+    return response
 
 
 # Get unique action number
