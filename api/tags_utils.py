@@ -17,12 +17,11 @@ def trace_handler_action(trace):
     clients_action = list()
     requests = trace["sessions"]["requests"]
     client_id = trace['client_id']+"-"+str(trace["sessions"]["session_id"])
-    clients_action = [do_action(client_id, request) for request in requests]
+    clients_action = [build_action(client_id, request) for request in requests]
     return clients_action
 
-def do_action(client_id, request):
+def build_action(client_id, request):
     action_row = list()
-    #action_row.append(";".join([client_id, request["request_tag"], request["request_time"]]))
     action_row.append(client_id)
     action_row.append(request["request_tag"])
     action_row.append(request["request_time"])
