@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 
-from api.models.token import Token
-from api.security import authenticate_user, create_access_token
+from src.models.token import Token
+from src.security import authenticate_user, create_access_token
 
 router = APIRouter(
     prefix="/token",

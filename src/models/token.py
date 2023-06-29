@@ -1,4 +1,4 @@
-from api.base import Base_model
+from src.base import Base_model
 
 
 class Token(Base_model):

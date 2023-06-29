@@ -22,9 +22,9 @@ trio = "^0.22.0"
 anyio = "^3.7.0"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 pytest = "^7.3.1"
-parser = {git = "git@gitlab.univ-lr.fr:trace_clustering/services/parser.git"}
+parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-tagging = {git = "git@gitlab.univ-lr.fr:trace_clustering/services/tagging.git"}
+tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.git"}
 
 
 

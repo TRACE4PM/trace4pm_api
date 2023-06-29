@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 
-from api.models.token import TokenData
-from api.models.users import User_inDB_Model, User_Model
+from src.models.token import TokenData
+from src.models.users import User_inDB_Model, User_Model
 
 # Define the secret key
 SECRET_KEY = "097a625b1090eda91a7f5474c780b2dc355d72e9b2e294fbc357a8a306189fd0"
