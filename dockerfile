@@ -16,6 +16,7 @@ RUN poetry install --no-interaction --no-ansi --no-root
 
 RUN mkdir src
 RUN mkdir temp
+RUN mkdir csv
 
 COPY ./src /app/src
 
