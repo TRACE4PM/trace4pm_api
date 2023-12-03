@@ -1,4 +1,10 @@
-FROM python:3.11-slim
+FROM python:3.11.6-slim
+
+RUN apt-get update
+
+# install git without interaction
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get -yq install git
 
 RUN mkdir /app
 
@@ -12,7 +18,7 @@ RUN pip install poetry
 # RUN poetry config virtualenvs.create false \
 #     && poetry install --no-dev --no-interaction --no-ansi --no-root
 # DEV
-RUN poetry install --no-interaction --no-ansi --no-root
+ RUN poetry install --no-interaction --no-ansi --no-root
 
 RUN mkdir src
 RUN mkdir temp

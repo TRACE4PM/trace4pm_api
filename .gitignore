@@ -1,10 +1,13 @@
 .venv
 .vscode
 __pycache__
-.DS_Store
-./*.DS_Store
 .pytest_cache
 poetry.lock
 log
 temp
 csv
+
+## MISC
+.idea
+.DS_Store
+./*.DS_Store
