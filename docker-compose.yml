@@ -7,7 +7,7 @@ services:
       - '8000:8000'
     depends_on:
       - database
-    restart: unless-stopped
+#    restart: unless-stopped
     container_name: api
     volumes:
       - ./src:/app/src
