@@ -19,7 +19,7 @@ import tempfile
 import subprocess
 from discover.main import (alpha_miner_alg, alpha_miner_plus, freq_alpha_miner, heuristic_miner,
                            heuristic_params_threshold, inductive_miner, dfg_to_petrinet, inductive_miner_tree,
-                           bpmn_model, dfg_perfor, heuristic_miner_petri, directly_follow)
+                           bpmn_model, dfg_perfor, heuristic_miner_petri, directly_follow,process_animate)
 from ..stats_utils import create_csv_file
 
 router = APIRouter(
@@ -70,7 +70,7 @@ async def alpha_plus(file: UploadFile = File(...), sep: str = ';'):
     try:
         log, net, im, fm = await alpha_miner_plus(file, sep)
         gviz = pn_visualizer.apply(net, im, fm)
-        pn_visualizer.view(gviz)
+        # pn_visualizer.view(gviz)
         diagram_visual.save(gviz, "src/outputs/diagram.png")
         headers = {"message": "png file saved"}
         return FileResponse(latest_image(), headers=headers)
@@ -84,7 +84,7 @@ async def alpha_miner_plus_quality(file: UploadFile = File(...), sep: str = ';',
     try:
         log, net, im, fm = await alpha_miner_plus(file, sep)
         gviz = pn_visualizer.apply(net, im, fm)
-        pn_visualizer.view(gviz)
+        # pn_visualizer.view(gviz)
         diagram_visual.save(gviz, "src/outputs/diagram.png")
 
         json_path = calculate_quality(log, net, im, fm, fitness_approach, precision_appreach)
@@ -101,7 +101,7 @@ async def alpha_miner_plus_quality(file: UploadFile = File(...), sep: str = ';',
 async def frequency_alpha_miner(file: UploadFile = File(...), sep: str = ';'):
     try:
         gviz = await freq_alpha_miner(file, sep)
-        pn_visualizer.view(gviz)
+        # pn_visualizer.view(gviz)
         diagram_visual.save(gviz, "src/outputs/diagram.png")
         headers = {"message": "png file saved"}
         return FileResponse(latest_image(), headers=headers)
@@ -128,7 +128,7 @@ async def heuristic_miner_to_petrinet(file: UploadFile = File(...), sep: str = '
     try:
         net, im, fm = await heuristic_miner_petri(file, sep)
         gviz = pn_visualizer.apply(net, im, fm)
-        pn_visualizer.view(gviz)
+        # pn_visualizer.view(gviz)
         diagram_visual.save(gviz, "src/outputs/diagram.png")
 
         headers = {"message": "png file saved"}
@@ -206,17 +206,17 @@ async def inductive_miner_process_tree(file: UploadFile = File(...), sep: str = 
 @router.post("/directly_follow_graph/")
 async def directly_follow_grap(file: UploadFile = File(...), sep: str = ';'):
     try:
-
         dfg, start_activities, end_activities = await directly_follow(file, sep)
+        # dfg, start_activities, end_activities = result
 
-        pm4py.view_dfg(dfg, start_activities, end_activities)
+        # pm4py.view_dfg(dfg, start_activities, end_activities)
         # pm4py.save_vis_dfg(dfg, start_activities, end_activities, "src/outputs/diagram.png")
 
         # gviz = pm4py.view_dfg(dfg, start_activities, end_activities)
         # pn_visualizer.save(gviz, "src/outputs/diagram.png")
         # precision = pm4py.algo.evaluation.precision.dfg.algorithm.apply(log, dfg, start_activities, end_activities)
         # results = {"precision": str(precision)}
-        return "file saved"
+        return dfg, start_activities, end_activities
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -275,7 +275,7 @@ async def bpmn_mod(file: UploadFile = File(...), sep: str = ';'):
 
 
 @router.post("/animate_process/")
-async def process_animate(file: UploadFile = File(...)):
+async def process_animation(file: UploadFile = File(...)):
     try:
         # Save the uploaded file
         file_path = os.path.join("src/logs", file.filename)
@@ -283,10 +283,7 @@ async def process_animate(file: UploadFile = File(...)):
             contents = await file.read()
             f.write(contents)
 
-        # Call the R function with the file path
-        r_script_path = os.path.join(os.path.dirname(__file__), "file.R")
-        res = subprocess.call(["Rscript", r_script_path, file_path])
-        res
+        res = await process_animate(file_path)
 
         if res != 0:
             raise HTTPException(status_code=500, detail="R script execution failed.")

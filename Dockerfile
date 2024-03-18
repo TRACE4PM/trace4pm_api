@@ -39,10 +39,6 @@ RUN apt-get update && apt-get install -y libglpk-dev
 # RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=TRUE)"
 
 
-# RUN DEBIAN_FRONTEND="noninteractive" apt-get install libmagickwand-dev --no-install-recommends -y
-
-
-
 RUN poetry install --no-interaction --no-ansi --no-root -vvv
 
 
