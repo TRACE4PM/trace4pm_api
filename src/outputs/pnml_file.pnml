@@ -1,604 +1,549 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <pnml>
-  <net id="imdf_net_1710770977.4830773" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
+  <net id="" type="http://www.pnml.org/version-2009/grammar/pnmlcoremodel">
     <name>
-      <text>imdf_net_1710770977.4830773</text>
+      <text></text>
     </name>
     <page id="n0">
-      <place id="p_44">
+      <place id="sink_DownloadRessource">
         <name>
-          <text>p_44</text>
+          <text>sink_DownloadRessource</text>
         </name>
       </place>
-      <place id="p_48">
+      <place id="source_ResearchReportExtraction">
         <name>
-          <text>p_48</text>
+          <text>source_ResearchReportExtraction</text>
         </name>
       </place>
-      <place id="p_15">
+      <place id="sink_AccessGallicaBlog">
         <name>
-          <text>p_15</text>
+          <text>sink_AccessGallicaBlog</text>
         </name>
       </place>
-      <place id="p_14">
+      <place id="sink_▶">
         <name>
-          <text>p_14</text>
+          <text>sink_▶</text>
         </name>
       </place>
-      <place id="p_12">
+      <place id="source_DownloadRessource">
         <name>
-          <text>p_12</text>
+          <text>source_DownloadRessource</text>
         </name>
       </place>
-      <place id="p_11">
+      <place id="source_AccessGallicaBlog">
         <name>
-          <text>p_11</text>
+          <text>source_AccessGallicaBlog</text>
         </name>
       </place>
-      <place id="p_4">
+      <place id="source_■">
         <name>
-          <text>p_4</text>
+          <text>source_■</text>
         </name>
       </place>
-      <place id="p_7">
+      <place id="sink_CollectionNavigation">
         <name>
-          <text>p_7</text>
+          <text>sink_CollectionNavigation</text>
         </name>
       </place>
-      <place id="p_8">
+      <place id="source_HomePage">
         <name>
-          <text>p_8</text>
+          <text>source_HomePage</text>
         </name>
       </place>
-      <place id="p_20">
+      <place id="source_AdvancedSearch">
         <name>
-          <text>p_20</text>
+          <text>source_AdvancedSearch</text>
         </name>
       </place>
-      <place id="p_42">
+      <place id="sink_AdvancedSearch">
         <name>
-          <text>p_42</text>
+          <text>sink_AdvancedSearch</text>
         </name>
       </place>
-      <place id="p_32">
+      <place id="sink_ViewingRessource">
         <name>
-          <text>p_32</text>
+          <text>sink_ViewingRessource</text>
         </name>
       </place>
-      <place id="p_25">
+      <place id="source_ViewingRessource">
         <name>
-          <text>p_25</text>
+          <text>source_ViewingRessource</text>
         </name>
       </place>
-      <place id="p_27">
+      <place id="source_▶">
         <name>
-          <text>p_27</text>
-        </name>
-      </place>
-      <place id="p_24">
-        <name>
-          <text>p_24</text>
-        </name>
-      </place>
-      <place id="p_39">
-        <name>
-          <text>p_39</text>
-        </name>
-      </place>
-      <place id="p_33">
-        <name>
-          <text>p_33</text>
-        </name>
-      </place>
-      <place id="p_34">
-        <name>
-          <text>p_34</text>
-        </name>
-      </place>
-      <place id="p_47">
-        <name>
-          <text>p_47</text>
-        </name>
-      </place>
-      <place id="p_43">
-        <name>
-          <text>p_43</text>
-        </name>
-      </place>
-      <place id="p_29">
-        <name>
-          <text>p_29</text>
-        </name>
-      </place>
-      <place id="p_28">
-        <name>
-          <text>p_28</text>
-        </name>
-      </place>
-      <place id="p_21">
-        <name>
-          <text>p_21</text>
-        </name>
-      </place>
-      <place id="p_19">
-        <name>
-          <text>p_19</text>
-        </name>
-      </place>
-      <place id="source">
-        <name>
-          <text>source</text>
+          <text>source_▶</text>
         </name>
         <initialMarking>
           <text>1</text>
         </initialMarking>
       </place>
-      <place id="p_3">
+      <place id="source_GallicaSearchEngine">
         <name>
-          <text>p_3</text>
+          <text>source_GallicaSearchEngine</text>
         </name>
       </place>
-      <place id="p_5">
+      <place id="sink_GallicaSearchEngine">
         <name>
-          <text>p_5</text>
+          <text>sink_GallicaSearchEngine</text>
         </name>
       </place>
-      <place id="sink">
+      <place id="sink_■">
         <name>
-          <text>sink</text>
+          <text>sink_■</text>
         </name>
       </place>
-      <place id="p_6">
+      <place id="source_CollectionNavigation">
         <name>
-          <text>p_6</text>
+          <text>source_CollectionNavigation</text>
         </name>
       </place>
-      <place id="p_10">
+      <place id="sink_HomePage">
         <name>
-          <text>p_10</text>
+          <text>sink_HomePage</text>
         </name>
       </place>
-      <place id="p_13">
+      <place id="sink_ResearchReportExtraction">
         <name>
-          <text>p_13</text>
+          <text>sink_ResearchReportExtraction</text>
         </name>
       </place>
-      <place id="p_31">
+      <transition id="GallicaSearchEngine_CollectionNavigation">
         <name>
-          <text>p_31</text>
+          <text>GallicaSearchEngine_CollectionNavigation</text>
         </name>
-      </place>
-      <place id="p_35">
-        <name>
-          <text>p_35</text>
-        </name>
-      </place>
-      <place id="p_40">
-        <name>
-          <text>p_40</text>
-        </name>
-      </place>
-      <place id="p_22">
-        <name>
-          <text>p_22</text>
-        </name>
-      </place>
-      <place id="p_26">
-        <name>
-          <text>p_26</text>
-        </name>
-      </place>
-      <place id="p_45">
-        <name>
-          <text>p_45</text>
-        </name>
-      </place>
-      <transition id="skip_39">
-        <name>
-          <text>skip_39</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9d18ddb6-5e52-4b3d-8e2e-62dd11407654"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6982aea0-b544-43a4-83f0-9546d34eebb0"/>
       </transition>
-      <transition id="skip_49">
+      <transition id="HomePage_GallicaSearchEngine">
         <name>
-          <text>skip_49</text>
+          <text>HomePage_GallicaSearchEngine</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="322cfbaf-a189-459f-97a3-43eee0dc304e"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fa1b2599-408f-4e5f-bc66-ae5c993ed2ea"/>
       </transition>
-      <transition id="skip_20">
+      <transition id="CollectionNavigation_■">
         <name>
-          <text>skip_20</text>
+          <text>CollectionNavigation_■</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0b3b530e-560b-42a8-bc93-00951dfc2936"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="eb57b1d6-4c16-45c9-912e-b4a0ee6f68ce"/>
       </transition>
-      <transition id="skip_25">
+      <transition id="HomePage_CollectionNavigation">
         <name>
-          <text>skip_25</text>
+          <text>HomePage_CollectionNavigation</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="049054f0-a32c-4789-b57e-45ffe9ba69d7"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7e18e993-e379-4dee-8c4a-cba645d98d62"/>
       </transition>
-      <transition id="init_loop_14">
+      <transition id="GallicaSearchEngine_DownloadRessource">
         <name>
-          <text>init_loop_14</text>
+          <text>GallicaSearchEngine_DownloadRessource</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="368382e4-3592-430d-b659-76677dc56d4f"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3822377a-0ab3-483e-b3c5-990506d9baca"/>
       </transition>
-      <transition id="d2a13eda-7b63-48ec-8702-29267d8bcef6">
+      <transition id="DownloadRessource_DownloadRessource">
+        <name>
+          <text>DownloadRessource_DownloadRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e6c8bbd8-fc7d-4cbd-9a97-f599c276c207"/>
+      </transition>
+      <transition id="trans_AdvancedSearch">
         <name>
           <text>AdvancedSearch</text>
         </name>
       </transition>
-      <transition id="skip_17">
-        <name>
-          <text>skip_17</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5e6d42f6-5c86-41d4-a0a0-599c6884133e"/>
-      </transition>
-      <transition id="skip_16">
-        <name>
-          <text>skip_16</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="84de9a7b-e2a4-4b36-9b33-b5d2cad51ee2"/>
-      </transition>
-      <transition id="skip_5">
-        <name>
-          <text>skip_5</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5c36f80c-d43d-48bf-9b98-fc502579d465"/>
-      </transition>
-      <transition id="tau_2">
-        <name>
-          <text>tau_2</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d5047d0a-b82f-4c6c-b72b-3295521c67a1"/>
-      </transition>
-      <transition id="init_loop_6">
-        <name>
-          <text>init_loop_6</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="75eaf77f-b9e3-4338-ada1-3a66a2a67ab4"/>
-      </transition>
-      <transition id="5abd25c7-2f22-4403-bb96-153e1b4b32b7">
-        <name>
-          <text>GallicaSearchEngine</text>
-        </name>
-      </transition>
-      <transition id="tauSplit_11">
-        <name>
-          <text>tauSplit_11</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9492ab8d-fead-489c-8e5b-5f380689f166"/>
-      </transition>
-      <transition id="skip_23">
-        <name>
-          <text>skip_23</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="119c4023-0359-470e-beb0-e388cdb46a1d"/>
-      </transition>
-      <transition id="1943e017-52c5-42ae-81b6-999270a777dd">
-        <name>
-          <text>DownloadRessource</text>
-        </name>
-      </transition>
-      <transition id="skip_50">
-        <name>
-          <text>skip_50</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4998eac4-888c-4fc5-a39d-cee4415d1f49"/>
-      </transition>
-      <transition id="init_loop_51">
-        <name>
-          <text>init_loop_51</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5eba606d-0690-4b99-8b15-86c1e328379f"/>
-      </transition>
-      <transition id="876d43b2-1cdc-497d-8067-9ad8897fb083">
-        <name>
-          <text>CollectionNavigation</text>
-        </name>
-      </transition>
-      <transition id="skip_53">
-        <name>
-          <text>skip_53</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4e9c8906-12cf-4bc4-b622-0bc4fdf7cb36"/>
-      </transition>
-      <transition id="skip_38">
-        <name>
-          <text>skip_38</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9f4ad896-49cf-444e-a77f-7a31253c82ff"/>
-      </transition>
-      <transition id="tauSplit_26">
-        <name>
-          <text>tauSplit_26</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7df309f1-9bbb-43a0-9780-03d111f67c18"/>
-      </transition>
-      <transition id="tauSplit_40">
-        <name>
-          <text>tauSplit_40</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2fa6cb0b-3a03-4aa5-84be-71f98167b248"/>
-      </transition>
-      <transition id="init_loop_35">
-        <name>
-          <text>init_loop_35</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0f4bd171-162f-436b-9970-5edb428e1415"/>
-      </transition>
-      <transition id="93728882-b7f1-438d-bcd8-c027af021357">
-        <name>
-          <text>AccessGallicaBlog</text>
-        </name>
-      </transition>
-      <transition id="init_loop_21">
-        <name>
-          <text>init_loop_21</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="2ebd0df6-68c1-4724-a3da-a0345dff80b3"/>
-      </transition>
-      <transition id="tauJoin_41">
-        <name>
-          <text>tauJoin_41</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="cfce6531-1ab0-4ef0-b029-686e2f143b25"/>
-      </transition>
-      <transition id="skip_31">
-        <name>
-          <text>skip_31</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8a14de07-5449-48e1-a709-08141ca9f3d7"/>
-      </transition>
-      <transition id="skip_37">
-        <name>
-          <text>skip_37</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e290fb36-2f70-498a-9559-0323b59d3555"/>
-      </transition>
-      <transition id="skip_54">
-        <name>
-          <text>skip_54</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="712729b7-5eb5-479f-a0ac-42cf64b9517f"/>
-      </transition>
-      <transition id="skip_32">
-        <name>
-          <text>skip_32</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="502c6205-2360-47d7-9b20-4f1d24855455"/>
-      </transition>
-      <transition id="skip_10">
-        <name>
-          <text>skip_10</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5dcd0a57-ab23-4842-9444-9502acc323f7"/>
-      </transition>
-      <transition id="skip_13">
-        <name>
-          <text>skip_13</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="801389ce-8783-4808-bc9f-c1a0dfbc3c05"/>
-      </transition>
-      <transition id="tau_1">
-        <name>
-          <text>tau_1</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8c2c009d-8985-4ed7-ac84-850141ca81b8"/>
-      </transition>
-      <transition id="tauJoin_4">
-        <name>
-          <text>tauJoin_4</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="89452155-1ff3-462b-820e-c13f8e26401f"/>
-      </transition>
-      <transition id="tauSplit_3">
-        <name>
-          <text>tauSplit_3</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d6db4b20-7b88-4eef-a5f2-90d03a8b2b2a"/>
-      </transition>
-      <transition id="skip_8">
-        <name>
-          <text>skip_8</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="3e79b241-ba6a-450a-addb-2158ca5f88c8"/>
-      </transition>
-      <transition id="skip_9">
-        <name>
-          <text>skip_9</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="204d0ead-03bd-4447-9f3f-ab28dee26b98"/>
-      </transition>
-      <transition id="tauJoin_12">
-        <name>
-          <text>tauJoin_12</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="05f205dc-8e4d-4369-900c-d04d9dbba419"/>
-      </transition>
-      <transition id="tauJoin_27">
-        <name>
-          <text>tauJoin_27</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4138d7a7-0328-49fe-b2e7-f622344dbd51"/>
-      </transition>
-      <transition id="skip_28">
-        <name>
-          <text>skip_28</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="dde239ae-ce3b-42be-84bf-d0b870f2f2d7"/>
-      </transition>
-      <transition id="d3459cbd-f620-47bd-be08-217dc33e028e">
+      <transition id="trans_HomePage">
         <name>
           <text>HomePage</text>
         </name>
       </transition>
-      <transition id="611cc5c6-35f5-4829-ae35-a111961fd0c8">
-        <name>
-          <text>ViewingRessource</text>
-        </name>
-      </transition>
-      <transition id="skip_33">
-        <name>
-          <text>skip_33</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="99451b8d-bc96-4d0c-9da9-7f1dfff99fd8"/>
-      </transition>
-      <transition id="skip_44">
-        <name>
-          <text>skip_44</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5a0591e4-6e23-4749-92bb-84259b760952"/>
-      </transition>
-      <transition id="skip_34">
-        <name>
-          <text>skip_34</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a9dbe984-87ce-489c-a288-0332ecd23fed"/>
-      </transition>
-      <transition id="skip_46">
-        <name>
-          <text>skip_46</text>
-        </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e6589c84-a3f4-460d-9119-a64f274025d0"/>
-      </transition>
-      <transition id="7d9deaef-aa59-4b8c-8dc3-888365e12b64">
+      <transition id="trans_ResearchReportExtraction">
         <name>
           <text>ResearchReportExtraction</text>
         </name>
       </transition>
-      <transition id="init_loop_47">
+      <transition id="trans_AccessGallicaBlog">
         <name>
-          <text>init_loop_47</text>
+          <text>AccessGallicaBlog</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9146c91a-25b8-4060-a78e-cf5c8314c889"/>
       </transition>
-      <transition id="skip_24">
+      <transition id="trans_ViewingRessource">
         <name>
-          <text>skip_24</text>
+          <text>ViewingRessource</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="10bd0e10-4b11-4708-8213-52b19e924a3b"/>
       </transition>
-      <transition id="init_loop_29">
+      <transition id="trans_▶">
         <name>
-          <text>init_loop_29</text>
+          <text>trans_▶</text>
         </name>
-        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="5fe0b55a-0a20-4a3d-bc7c-b77087fe6a88"/>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d95f3aef-2dda-4972-a694-5dc04a045f50"/>
       </transition>
-      <arc id="139758388584464" source="skip_10" target="p_11"/>
-      <arc id="139758389694480" source="p_24" target="tauSplit_26"/>
-      <arc id="139758388587024" source="tauJoin_12" target="p_11"/>
-      <arc id="139758389692944" source="skip_25" target="p_25"/>
-      <arc id="139758389705744" source="d2a13eda-7b63-48ec-8702-29267d8bcef6" target="p_15"/>
-      <arc id="139759049592336" source="skip_32" target="p_27"/>
-      <arc id="139758389703184" source="p_19" target="init_loop_21"/>
-      <arc id="139758389696528" source="876d43b2-1cdc-497d-8067-9ad8897fb083" target="p_29"/>
-      <arc id="139758388192272" source="p_40" target="tauJoin_41"/>
-      <arc id="139758388193936" source="skip_44" target="p_39"/>
-      <arc id="139759049593936" source="tauSplit_26" target="p_31"/>
-      <arc id="139758388188752" source="skip_31" target="p_28"/>
-      <arc id="139758389702224" source="p_24" target="skip_25"/>
-      <arc id="139758388580944" source="p_5" target="skip_5"/>
-      <arc id="139758389703248" source="p_19" target="skip_20"/>
-      <arc id="139758389703760" source="p_28" target="876d43b2-1cdc-497d-8067-9ad8897fb083"/>
-      <arc id="139758388585040" source="p_5" target="init_loop_6"/>
-      <arc id="139759050923600" source="source" target="tau_1"/>
-      <arc id="139759050919504" source="tau_1" target="p_3"/>
-      <arc id="139758389690448" source="tauJoin_27" target="p_25"/>
-      <arc id="139758389694544" source="p_27" target="tauJoin_27"/>
-      <arc id="139758389705808" source="p_15" target="skip_17"/>
-      <arc id="139758388185296" source="skip_50" target="p_43"/>
-      <arc id="139758388192016" source="skip_46" target="p_43"/>
-      <arc id="139758418383760" source="tauJoin_41" target="p_32"/>
-      <arc id="139759049599952" source="p_32" target="tauJoin_27"/>
-      <arc id="139758388190288" source="p_48" target="skip_54"/>
-      <arc id="139758389703824" source="p_21" target="611cc5c6-35f5-4829-ae35-a111961fd0c8"/>
-      <arc id="139758388192528" source="p_45" target="skip_49"/>
-      <arc id="139758388188560" source="p_47" target="93728882-b7f1-438d-bcd8-c027af021357"/>
-      <arc id="139758418388752" source="p_35" target="skip_38"/>
-      <arc id="139758388193040" source="p_42" target="skip_46"/>
-      <arc id="139758388199248" source="tauSplit_40" target="p_42"/>
-      <arc id="139758388590224" source="p_12" target="skip_13"/>
-      <arc id="139758389696144" source="init_loop_14" target="p_14"/>
-      <arc id="139758389692048" source="p_26" target="init_loop_29"/>
-      <arc id="139758388587152" source="init_loop_6" target="p_7"/>
-      <arc id="139758388576400" source="tauSplit_3" target="p_10"/>
-      <arc id="139758388578960" source="p_10" target="skip_10"/>
-      <arc id="139758389700752" source="skip_17" target="p_13"/>
-      <arc id="139758389692560" source="skip_24" target="p_20"/>
-      <arc id="139758389698704" source="611cc5c6-35f5-4829-ae35-a111961fd0c8" target="p_22"/>
-      <arc id="139758418392016" source="p_33" target="tauSplit_40"/>
-      <arc id="139758388198544" source="1943e017-52c5-42ae-81b6-999270a777dd" target="p_40"/>
-      <arc id="139758418392528" source="skip_38" target="p_33"/>
-      <arc id="139758418382352" source="p_34" target="d3459cbd-f620-47bd-be08-217dc33e028e"/>
-      <arc id="139758389694672" source="skip_28" target="p_27"/>
-      <arc id="139759049598672" source="p_29" target="skip_32"/>
-      <arc id="139759050916560" source="tau_2" target="sink"/>
-      <arc id="139758388186832" source="skip_23" target="p_21"/>
-      <arc id="139758389693648" source="init_loop_29" target="p_28"/>
-      <arc id="139759049603792" source="skip_33" target="p_32"/>
-      <arc id="139758388183184" source="p_42" target="init_loop_47"/>
-      <arc id="139758388183696" source="skip_49" target="p_44"/>
-      <arc id="139758388196112" source="tauSplit_11" target="p_19"/>
-      <arc id="139758388186960" source="p_20" target="tauJoin_12"/>
-      <arc id="139758388590352" source="p_13" target="tauJoin_12"/>
-      <arc id="139758389700368" source="skip_20" target="p_20"/>
-      <arc id="139758388591376" source="skip_5" target="p_6"/>
-      <arc id="139758388189968" source="tauSplit_40" target="p_39"/>
-      <arc id="139758389698320" source="init_loop_21" target="p_21"/>
-      <arc id="139758389691664" source="p_26" target="skip_28"/>
-      <arc id="139758389695760" source="p_22" target="skip_24"/>
-      <arc id="139758418391824" source="p_31" target="skip_34"/>
-      <arc id="139758418379024" source="skip_34" target="p_33"/>
-      <arc id="139758418381456" source="skip_39" target="p_32"/>
-      <arc id="139758418380240" source="d3459cbd-f620-47bd-be08-217dc33e028e" target="p_35"/>
-      <arc id="139758388196944" source="p_43" target="tauJoin_41"/>
-      <arc id="139758388186768" source="p_3" target="init_loop_51"/>
-      <arc id="139758388185040" source="p_48" target="skip_53"/>
-      <arc id="139758388191568" source="skip_37" target="p_34"/>
-      <arc id="139758388581712" source="p_11" target="tauJoin_4"/>
-      <arc id="139758388589904" source="skip_13" target="p_13"/>
-      <arc id="139758388579152" source="p_7" target="5abd25c7-2f22-4403-bb96-153e1b4b32b7"/>
-      <arc id="139759050920272" source="p_3" target="tauSplit_3"/>
-      <arc id="139758388580688" source="p_6" target="tauJoin_4"/>
-      <arc id="139758388582736" source="p_8" target="skip_8"/>
-      <arc id="139758389705040" source="p_14" target="d2a13eda-7b63-48ec-8702-29267d8bcef6"/>
-      <arc id="139758388187472" source="skip_8" target="p_7"/>
-      <arc id="139759049599824" source="p_29" target="skip_31"/>
-      <arc id="139758418382992" source="p_35" target="skip_37"/>
-      <arc id="139758388189520" source="tauSplit_11" target="p_24"/>
-      <arc id="139758418381264" source="init_loop_35" target="p_34"/>
-      <arc id="139758388186064" source="p_45" target="skip_50"/>
-      <arc id="139758388194512" source="skip_54" target="p_4"/>
-      <arc id="139758388192784" source="init_loop_47" target="p_44"/>
-      <arc id="139758388188816" source="93728882-b7f1-438d-bcd8-c027af021357" target="p_48"/>
-      <arc id="139758388589456" source="tauJoin_4" target="p_4"/>
-      <arc id="139758388584848" source="tauSplit_3" target="p_5"/>
-      <arc id="139758388590992" source="p_8" target="skip_9"/>
-      <arc id="139758388577680" source="p_10" target="tauSplit_11"/>
-      <arc id="139758388578704" source="p_12" target="init_loop_14"/>
-      <arc id="139758388192144" source="skip_53" target="p_47"/>
-      <arc id="139758389706128" source="p_15" target="skip_16"/>
-      <arc id="139758388197776" source="p_40" target="skip_44"/>
-      <arc id="139759049599504" source="p_31" target="skip_33"/>
-      <arc id="139758388193808" source="p_44" target="7d9deaef-aa59-4b8c-8dc3-888365e12b64"/>
-      <arc id="139758388183632" source="init_loop_51" target="p_47"/>
-      <arc id="139758388198288" source="p_39" target="1943e017-52c5-42ae-81b6-999270a777dd"/>
-      <arc id="139758389694416" source="p_22" target="skip_23"/>
-      <arc id="139758388585424" source="tauSplit_11" target="p_12"/>
-      <arc id="139758388187600" source="p_25" target="tauJoin_12"/>
-      <arc id="139758389692368" source="tauSplit_26" target="p_26"/>
-      <arc id="139758388586960" source="skip_9" target="p_6"/>
-      <arc id="139758388581328" source="5abd25c7-2f22-4403-bb96-153e1b4b32b7" target="p_8"/>
-      <arc id="139759050920400" source="p_4" target="tau_2"/>
-      <arc id="139758388188624" source="skip_16" target="p_14"/>
-      <arc id="139758388183440" source="7d9deaef-aa59-4b8c-8dc3-888365e12b64" target="p_45"/>
-      <arc id="139758418391568" source="p_33" target="skip_39"/>
-      <arc id="139758418389840" source="p_31" target="init_loop_35"/>
+      <transition id="trans_DownloadRessource">
+        <name>
+          <text>DownloadRessource</text>
+        </name>
+      </transition>
+      <transition id="DownloadRessource_GallicaSearchEngine">
+        <name>
+          <text>DownloadRessource_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="364ad678-c9c2-4bd5-8f7c-c8d59947968a"/>
+      </transition>
+      <transition id="GallicaSearchEngine_GallicaSearchEngine">
+        <name>
+          <text>GallicaSearchEngine_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b7daea17-92d7-4f8d-8fa2-46b5bfa92208"/>
+      </transition>
+      <transition id="CollectionNavigation_DownloadRessource">
+        <name>
+          <text>CollectionNavigation_DownloadRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f685c23a-e404-4d01-8cfc-ee6af659a004"/>
+      </transition>
+      <transition id="GallicaSearchEngine_HomePage">
+        <name>
+          <text>GallicaSearchEngine_HomePage</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c8339e57-4a6f-469e-b7ff-06885d080941"/>
+      </transition>
+      <transition id="▶_GallicaSearchEngine">
+        <name>
+          <text>▶_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a884d233-4934-4f58-974a-18b0089429bd"/>
+      </transition>
+      <transition id="ViewingRessource_■">
+        <name>
+          <text>ViewingRessource_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="4d8267e5-3713-4f1c-ac27-e056aa03938a"/>
+      </transition>
+      <transition id="GallicaSearchEngine_AdvancedSearch">
+        <name>
+          <text>GallicaSearchEngine_AdvancedSearch</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="beca06ee-0b2e-403b-af26-c7de2d108e46"/>
+      </transition>
+      <transition id="DownloadRessource_■">
+        <name>
+          <text>DownloadRessource_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="69065866-d387-493b-ab33-51dc476ffdaf"/>
+      </transition>
+      <transition id="HomePage_HomePage">
+        <name>
+          <text>HomePage_HomePage</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ecefd9d6-3ab4-4341-9841-a701687224b0"/>
+      </transition>
+      <transition id="DownloadRessource_ViewingRessource">
+        <name>
+          <text>DownloadRessource_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="629bee9d-df53-4955-ad88-ba961ebbc91c"/>
+      </transition>
+      <transition id="▶_HomePage">
+        <name>
+          <text>▶_HomePage</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="a37f596a-6591-4b15-98f0-1f228d113a7c"/>
+      </transition>
+      <transition id="GallicaSearchEngine_■">
+        <name>
+          <text>GallicaSearchEngine_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c241598e-94d9-4ef0-85ee-9fbcae4cc3ce"/>
+      </transition>
+      <transition id="HomePage_AdvancedSearch">
+        <name>
+          <text>HomePage_AdvancedSearch</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="7ba7cfc4-0632-4830-b053-3ec2c9ae0d16"/>
+      </transition>
+      <transition id="▶_ViewingRessource">
+        <name>
+          <text>▶_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="61715941-3ce1-4331-aa6d-e2a7ffc0c85e"/>
+      </transition>
+      <transition id="CollectionNavigation_HomePage">
+        <name>
+          <text>CollectionNavigation_HomePage</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ca9e8534-28d7-4aae-a106-7244794374c2"/>
+      </transition>
+      <transition id="ResearchReportExtraction_GallicaSearchEngine">
+        <name>
+          <text>ResearchReportExtraction_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="02f491e5-56b5-428a-a0d7-cb45dbf6e43b"/>
+      </transition>
+      <transition id="CollectionNavigation_GallicaSearchEngine">
+        <name>
+          <text>CollectionNavigation_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="8fc87886-ba5b-4aa0-90d6-9331633dd4f7"/>
+      </transition>
+      <transition id="ViewingRessource_CollectionNavigation">
+        <name>
+          <text>ViewingRessource_CollectionNavigation</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c10c4e52-051c-4054-8d39-9c037365ac45"/>
+      </transition>
+      <transition id="trans_GallicaSearchEngine">
+        <name>
+          <text>GallicaSearchEngine</text>
+        </name>
+      </transition>
+      <transition id="trans_■">
+        <name>
+          <text>trans_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d23005fc-3653-4cea-89c3-d4c379ca7bab"/>
+      </transition>
+      <transition id="trans_CollectionNavigation">
+        <name>
+          <text>CollectionNavigation</text>
+        </name>
+      </transition>
+      <transition id="ViewingRessource_GallicaSearchEngine">
+        <name>
+          <text>ViewingRessource_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="9eb49ff8-f8e0-4e57-b366-3e31d2d6c42e"/>
+      </transition>
+      <transition id="ViewingRessource_ViewingRessource">
+        <name>
+          <text>ViewingRessource_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="6b94529d-3e88-49d1-b331-3d37b7e27dd7"/>
+      </transition>
+      <transition id="ResearchReportExtraction_ViewingRessource">
+        <name>
+          <text>ResearchReportExtraction_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="b3831b69-fefe-4fc9-a7bb-b553e7426a32"/>
+      </transition>
+      <transition id="DownloadRessource_ResearchReportExtraction">
+        <name>
+          <text>DownloadRessource_ResearchReportExtraction</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="33301e1c-496c-4cd4-97ee-0c70ab91e05e"/>
+      </transition>
+      <transition id="ViewingRessource_ResearchReportExtraction">
+        <name>
+          <text>ViewingRessource_ResearchReportExtraction</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="849cb353-9687-4507-89a0-1d5bd3f26fab"/>
+      </transition>
+      <transition id="▶_DownloadRessource">
+        <name>
+          <text>▶_DownloadRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="613db8d4-835c-4669-825e-51fd6d50fcd0"/>
+      </transition>
+      <transition id="AdvancedSearch_AdvancedSearch">
+        <name>
+          <text>AdvancedSearch_AdvancedSearch</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ab95cc7f-94c9-476e-ae9c-acedc905250d"/>
+      </transition>
+      <transition id="AccessGallicaBlog_■">
+        <name>
+          <text>AccessGallicaBlog_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="d6dfb1d6-f0fd-45f3-a939-b451625294a2"/>
+      </transition>
+      <transition id="CollectionNavigation_CollectionNavigation">
+        <name>
+          <text>CollectionNavigation_CollectionNavigation</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="c2520751-289c-49c4-9749-3dddf741bc50"/>
+      </transition>
+      <transition id="▶_CollectionNavigation">
+        <name>
+          <text>▶_CollectionNavigation</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="f7fb67b6-f3f8-4d5b-a3f3-937d85c38fc0"/>
+      </transition>
+      <transition id="▶_AccessGallicaBlog">
+        <name>
+          <text>▶_AccessGallicaBlog</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e40634fc-5fab-4e5a-96cf-03a0d409152d"/>
+      </transition>
+      <transition id="GallicaSearchEngine_ViewingRessource">
+        <name>
+          <text>GallicaSearchEngine_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="54022fed-5aea-4d9b-8e35-d457af45182e"/>
+      </transition>
+      <transition id="ViewingRessource_HomePage">
+        <name>
+          <text>ViewingRessource_HomePage</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="af012ea4-daa7-4d14-9f20-fd4a624ad617"/>
+      </transition>
+      <transition id="ResearchReportExtraction_DownloadRessource">
+        <name>
+          <text>ResearchReportExtraction_DownloadRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="278aad3b-dc2d-430d-8300-25f7914d4a07"/>
+      </transition>
+      <transition id="AccessGallicaBlog_AccessGallicaBlog">
+        <name>
+          <text>AccessGallicaBlog_AccessGallicaBlog</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="ab28a863-eee4-4301-b17a-f8282c911595"/>
+      </transition>
+      <transition id="ResearchReportExtraction_CollectionNavigation">
+        <name>
+          <text>ResearchReportExtraction_CollectionNavigation</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="fa825824-96bb-4c60-9c9a-4953522b3816"/>
+      </transition>
+      <transition id="HomePage_■">
+        <name>
+          <text>HomePage_■</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="59fca879-8c0c-4a16-bf67-2f9eac67bba4"/>
+      </transition>
+      <transition id="AdvancedSearch_GallicaSearchEngine">
+        <name>
+          <text>AdvancedSearch_GallicaSearchEngine</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e13cd7b0-f3da-4faa-a729-8d3779a43901"/>
+      </transition>
+      <transition id="CollectionNavigation_ViewingRessource">
+        <name>
+          <text>CollectionNavigation_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="1595a835-b42a-42f2-bd7e-6b6ce8c85002"/>
+      </transition>
+      <transition id="GallicaSearchEngine_ResearchReportExtraction">
+        <name>
+          <text>GallicaSearchEngine_ResearchReportExtraction</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="e8207f01-a84a-4808-86fc-90c7d57550b0"/>
+      </transition>
+      <transition id="HomePage_ViewingRessource">
+        <name>
+          <text>HomePage_ViewingRessource</text>
+        </name>
+        <toolspecific tool="ProM" version="6.4" activity="$invisible$" localNodeID="0bd6607a-77eb-46e6-a2ea-a67451d43556"/>
+      </transition>
+      <arc id="140098259768848" source="trans_DownloadRessource" target="sink_DownloadRessource"/>
+      <arc id="140098259767312" source="DownloadRessource_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259770896" source="source_AccessGallicaBlog" target="trans_AccessGallicaBlog"/>
+      <arc id="140098259771408" source="trans_ResearchReportExtraction" target="sink_ResearchReportExtraction"/>
+      <arc id="140098259772944" source="source_HomePage" target="trans_HomePage"/>
+      <arc id="140098259749392" source="sink_HomePage" target="HomePage_ViewingRessource"/>
+      <arc id="140098259750416" source="sink_HomePage" target="HomePage_GallicaSearchEngine"/>
+      <arc id="140098259767824" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_DownloadRessource"/>
+      <arc id="140098259763728" source="GallicaSearchEngine_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259764240" source="sink_CollectionNavigation" target="CollectionNavigation_ViewingRessource"/>
+      <arc id="140098259766864" source="DownloadRessource_DownloadRessource" target="source_DownloadRessource"/>
+      <arc id="140098259763280" source="CollectionNavigation_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098259747408" source="AccessGallicaBlog_AccessGallicaBlog" target="source_AccessGallicaBlog"/>
+      <arc id="140098660673616" source="source_GallicaSearchEngine" target="trans_GallicaSearchEngine"/>
+      <arc id="140098259779152" source="trans_GallicaSearchEngine" target="sink_GallicaSearchEngine"/>
+      <arc id="140098259765840" source="sink_ViewingRessource" target="ViewingRessource_CollectionNavigation"/>
+      <arc id="140098276964944" source="▶_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098276951632" source="sink_▶" target="▶_HomePage"/>
+      <arc id="140098261841488" source="▶_AccessGallicaBlog" target="source_AccessGallicaBlog"/>
+      <arc id="140098261829712" source="sink_CollectionNavigation" target="CollectionNavigation_■"/>
+      <arc id="140098261829840" source="CollectionNavigation_■" target="source_■"/>
+      <arc id="140098261842256" source="▶_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098276963472" source="sink_▶" target="▶_GallicaSearchEngine"/>
+      <arc id="140098259762512" source="sink_HomePage" target="HomePage_AdvancedSearch"/>
+      <arc id="140098261841552" source="▶_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259764880" source="GallicaSearchEngine_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259760784" source="sink_ViewingRessource" target="ViewingRessource_ResearchReportExtraction"/>
+      <arc id="140098259752592" source="ResearchReportExtraction_DownloadRessource" target="source_DownloadRessource"/>
+      <arc id="140098259756688" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_ResearchReportExtraction"/>
+      <arc id="140098259746960" source="GallicaSearchEngine_HomePage" target="source_HomePage"/>
+      <arc id="140098259768976" source="source_DownloadRessource" target="trans_DownloadRessource"/>
+      <arc id="140098259777168" source="trans_CollectionNavigation" target="sink_CollectionNavigation"/>
+      <arc id="140098259772048" source="trans_AdvancedSearch" target="sink_AdvancedSearch"/>
+      <arc id="140098259769488" source="trans_▶" target="sink_▶"/>
+      <arc id="140098259765392" source="CollectionNavigation_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259761296" source="GallicaSearchEngine_AdvancedSearch" target="source_AdvancedSearch"/>
+      <arc id="140098261827920" source="sink_▶" target="▶_DownloadRessource"/>
+      <arc id="140098261840336" source="sink_▶" target="▶_CollectionNavigation"/>
+      <arc id="140098261830160" source="sink_AccessGallicaBlog" target="AccessGallicaBlog_■"/>
+      <arc id="140098276963280" source="▶_HomePage" target="source_HomePage"/>
+      <arc id="140098261828944" source="HomePage_■" target="source_■"/>
+      <arc id="140098259762832" source="HomePage_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098259766992" source="sink_DownloadRessource" target="DownloadRessource_DownloadRessource"/>
+      <arc id="140098259763408" source="sink_CollectionNavigation" target="CollectionNavigation_CollectionNavigation"/>
+      <arc id="140098259747536" source="sink_AccessGallicaBlog" target="AccessGallicaBlog_AccessGallicaBlog"/>
+      <arc id="140098259770064" source="trans_ViewingRessource" target="sink_ViewingRessource"/>
+      <arc id="140098259768528" source="ViewingRessource_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259766480" source="DownloadRessource_ResearchReportExtraction" target="source_ResearchReportExtraction"/>
+      <arc id="140098259750928" source="DownloadRessource_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259762384" source="HomePage_AdvancedSearch" target="source_AdvancedSearch"/>
+      <arc id="140098276959952" source="sink_▶" target="▶_ViewingRessource"/>
+      <arc id="140098261828816" source="sink_HomePage" target="HomePage_■"/>
+      <arc id="140098259763856" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_ViewingRessource"/>
+      <arc id="140098259766096" source="ResearchReportExtraction_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259755920" source="AdvancedSearch_AdvancedSearch" target="source_AdvancedSearch"/>
+      <arc id="140098259766608" source="sink_DownloadRessource" target="DownloadRessource_ResearchReportExtraction"/>
+      <arc id="140098261829264" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_■"/>
+      <arc id="140098259772176" source="source_AdvancedSearch" target="trans_AdvancedSearch"/>
+      <arc id="140098259769616" source="source_▶" target="trans_▶"/>
+      <arc id="140098259749136" source="ViewingRessource_HomePage" target="source_HomePage"/>
+      <arc id="140098259754768" source="sink_HomePage" target="HomePage_HomePage"/>
+      <arc id="140098259762960" source="sink_HomePage" target="HomePage_CollectionNavigation"/>
+      <arc id="140098259751184" source="HomePage_HomePage" target="source_HomePage"/>
+      <arc id="140098259747088" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_HomePage"/>
+      <arc id="140098259755792" source="GallicaSearchEngine_ResearchReportExtraction" target="source_ResearchReportExtraction"/>
+      <arc id="140098259764496" source="GallicaSearchEngine_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098259761936" source="AdvancedSearch_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098261838224" source="sink_▶" target="▶_AccessGallicaBlog"/>
+      <arc id="140098261828048" source="▶_DownloadRessource" target="source_DownloadRessource"/>
+      <arc id="140098259749520" source="CollectionNavigation_HomePage" target="source_HomePage"/>
+      <arc id="140098261830288" source="AccessGallicaBlog_■" target="source_■"/>
+      <arc id="140098259750544" source="ViewingRessource_ResearchReportExtraction" target="source_ResearchReportExtraction"/>
+      <arc id="140098259750736" source="sink_ViewingRessource" target="ViewingRessource_HomePage"/>
+      <arc id="140098259759952" source="ResearchReportExtraction_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259765072" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_GallicaSearchEngine"/>
+      <arc id="140098259750224" source="sink_ResearchReportExtraction" target="ResearchReportExtraction_CollectionNavigation"/>
+      <arc id="140098259775824" source="trans_■" target="sink_■"/>
+      <arc id="140098259776336" source="source_■" target="trans_■"/>
+      <arc id="140098259768656" source="sink_ViewingRessource" target="ViewingRessource_ViewingRessource"/>
+      <arc id="140098259768144" source="ViewingRessource_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259767440" source="sink_DownloadRessource" target="DownloadRessource_GallicaSearchEngine"/>
+      <arc id="140098259753296" source="ResearchReportExtraction_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098259751568" source="sink_CollectionNavigation" target="CollectionNavigation_HomePage"/>
+      <arc id="140098261828368" source="sink_ViewingRessource" target="ViewingRessource_■"/>
+      <arc id="140098261830608" source="sink_DownloadRessource" target="DownloadRessource_■"/>
+      <arc id="140098259754320" source="sink_ResearchReportExtraction" target="ResearchReportExtraction_GallicaSearchEngine"/>
+      <arc id="140098261829392" source="GallicaSearchEngine_■" target="source_■"/>
+      <arc id="140098259770256" source="source_ViewingRessource" target="trans_ViewingRessource"/>
+      <arc id="140098259776400" source="source_CollectionNavigation" target="trans_CollectionNavigation"/>
+      <arc id="140098259772816" source="trans_HomePage" target="sink_HomePage"/>
+      <arc id="140098259749264" source="HomePage_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259770768" source="trans_AccessGallicaBlog" target="sink_AccessGallicaBlog"/>
+      <arc id="140098259750800" source="sink_CollectionNavigation" target="CollectionNavigation_DownloadRessource"/>
+      <arc id="140098259767696" source="GallicaSearchEngine_DownloadRessource" target="source_DownloadRessource"/>
+      <arc id="140098259764112" source="CollectionNavigation_ViewingRessource" target="source_ViewingRessource"/>
+      <arc id="140098259764624" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_CollectionNavigation"/>
+      <arc id="140098259753104" source="CollectionNavigation_DownloadRessource" target="source_DownloadRessource"/>
+      <arc id="140098259762064" source="sink_AdvancedSearch" target="AdvancedSearch_GallicaSearchEngine"/>
+      <arc id="140098259750864" source="sink_ResearchReportExtraction" target="ResearchReportExtraction_DownloadRessource"/>
+      <arc id="140098259751376" source="sink_DownloadRessource" target="DownloadRessource_ViewingRessource"/>
+      <arc id="140098259754960" source="HomePage_GallicaSearchEngine" target="source_GallicaSearchEngine"/>
+      <arc id="140098259765200" source="sink_CollectionNavigation" target="CollectionNavigation_GallicaSearchEngine"/>
+      <arc id="140098259768272" source="sink_ViewingRessource" target="ViewingRessource_GallicaSearchEngine"/>
+      <arc id="140098259771536" source="source_ResearchReportExtraction" target="trans_ResearchReportExtraction"/>
+      <arc id="140098259765712" source="ViewingRessource_CollectionNavigation" target="source_CollectionNavigation"/>
+      <arc id="140098259766224" source="sink_ResearchReportExtraction" target="ResearchReportExtraction_ViewingRessource"/>
+      <arc id="140098259761616" source="sink_GallicaSearchEngine" target="GallicaSearchEngine_AdvancedSearch"/>
+      <arc id="140098259755152" source="sink_AdvancedSearch" target="AdvancedSearch_AdvancedSearch"/>
+      <arc id="140098261828496" source="ViewingRessource_■" target="source_■"/>
+      <arc id="140098261830736" source="DownloadRessource_■" target="source_■"/>
     </page>
     <finalmarkings>
       <marking>
-        <place idref="sink">
+        <place idref="sink_■">
           <text>1</text>
         </place>
       </marking>

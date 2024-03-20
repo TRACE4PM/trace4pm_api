@@ -20,8 +20,6 @@ RUN pip install poetry
 # DEV
 RUN apt-get update && apt-get install -y r-base
 RUN apt-get update && apt-get install -y graphviz
-RUN apt-get update && apt-get install -y xdg-utils
-RUN apt-get update && apt-get install -y w3m
 
 RUN apt-get update && \
     apt-get install -y \
@@ -36,7 +34,7 @@ RUN apt-get update && apt-get install -y libglpk-dev
 
 # installing the necessary package for the process animation
 # takes more than 30min to install all the dependencies
-# RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=TRUE)"
+RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=TRUE)"
 
 
 RUN poetry install --no-interaction --no-ansi --no-root -vvv
