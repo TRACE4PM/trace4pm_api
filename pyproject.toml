@@ -20,6 +20,9 @@ aiofiles = "^23.1.0"
 httpx = "^0.24.1"
 trio = "^0.22.0"
 anyio = "^3.7.0"
+pandas = "^2.2.2"
+scikit-learn = "^1.4"
+numpy = "^1.26.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 pytest = "^7.3.1"
 parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git"}
@@ -27,7 +30,7 @@ passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.git"}
 pm4py = "2.7.8.4"
 discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"}
-
+clustering = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}
 
 
 [tool.poetry.group.dev.dependencies]
