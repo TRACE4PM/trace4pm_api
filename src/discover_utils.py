@@ -7,9 +7,9 @@ import pm4py
 import json
 
 
-
-async def read_csv(file_content):
-    dataframe = pd.read_csv(io.StringIO(file_content.decode('utf-8')), sep=";")
+async def read_csv(file):
+    # file_content = await file.read()
+    dataframe = pd.read_csv(file, sep=";")
 
     # renaming the col ending with _id
     dataframe.rename(columns=lambda x: 'case:concept:name' if x.endswith('_id') else x, inplace=True)
@@ -26,18 +26,14 @@ async def read_csv(file_content):
     return log
 
 
-async def read_files(file):
-    file_content = await file.read()
-    with tempfile.NamedTemporaryFile(delete=False) as temp_file:
-        temp_file.write(file_content)
-        temp_file_path = temp_file.name
-        if file.filename.endswith('.csv'):
-            log = await read_csv(file_content)
-        elif file.filename.endswith('.xes'):
-            log = pm4py.read_xes(temp_file_path)
-
-    os.remove(temp_file_path)
-    return log
+async def read_files(file_path):
+    extension = os.path.splitext(file_path)[1].lower()
+    if extension == '.csv':
+        log = await read_csv(file_path)
+        return log
+    elif extension == '.xes':
+        log = pm4py.read_xes(file_path)
+        return log
 
 
 def latest_image():
@@ -46,5 +42,3 @@ def latest_image():
     latest_image = max(list_of_files, key=os.path.getctime)
 
     return latest_image
-
-

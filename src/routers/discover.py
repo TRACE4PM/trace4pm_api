@@ -6,6 +6,9 @@ from discover.main import (alpha_miner_algo, alpha_algo_quality, alpha_miner_plu
                            inductive_miner, inductive_miner_quality, directly_follow,
                            dfg_petri_quality, inductive_miner_tree,
                            dfg_performance, bpmn_model, process_animate)
+from ..models.params import Quality_Type
+import tempfile
+import io
 
 router = APIRouter(
     prefix="/discovery",
@@ -16,7 +19,14 @@ router = APIRouter(
 @router.post("/alpha-miner/")
 async def alpha_miner_algorithm(file: UploadFile = File(...)):
     try:
-        await alpha_miner_algo(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        await alpha_miner_algo(temp_file_path)
         return {"message": "png file saved"}
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
@@ -25,10 +35,17 @@ async def alpha_miner_algorithm(file: UploadFile = File(...)):
 
 
 @router.post("/alpha-miner-algo-quality/")
-async def alphaminer_algo_quality(file: UploadFile = File(...), fitness_approach: str = "token based",
-                                  precision_approach: str = "token based"):
+async def alphaminer_algo_quality(fitness_approach: Quality_Type,
+                                  precision_approach: Quality_Type, file: UploadFile = File(...)):
     try:
-        zip = await alpha_algo_quality(file, fitness_approach, precision_approach)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        zip = await alpha_algo_quality(temp_file_path, fitness_approach.lower(), precision_approach.lower())
         return zip
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
@@ -41,7 +58,14 @@ async def alphaminer_algo_quality(file: UploadFile = File(...), fitness_approach
 @router.post("/alpha-miner-plus/")
 async def alpha_plus(file: UploadFile = File(...)):
     try:
-        await alpha_miner_plus(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        await alpha_miner_plus(temp_file_path)
 
         # headers = {"message": "png file saved"}
         # return FileResponse(latest_image(), headers=headers)
@@ -51,10 +75,17 @@ async def alpha_plus(file: UploadFile = File(...)):
 
 
 @router.post("/alpha-miner-plus-quality/")
-async def alpha_miner_plus_quality(file: UploadFile = File(...), fitness_approach: str = "token based",
-                                   precision_approach: str = "token based"):
+async def alpha_miner_plus_quality(fitness_approach: Quality_Type,
+                                  precision_approach: Quality_Type, file: UploadFile = File(...)):
     try:
-        zip = await alpha_miner_plus_quality(file, fitness_approach, precision_approach)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        zip = await alpha_miner_plus_quality(temp_file_path, fitness_approach, precision_approach)
         return zip
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -63,7 +94,13 @@ async def alpha_miner_plus_quality(file: UploadFile = File(...), fitness_approac
 @router.post("/alpha-miner-frequency/")
 async def frequency_alpha_miner(file: UploadFile = File(...)):
     try:
-        await freq_alpha_miner(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        await freq_alpha_miner(temp_file_path)
         return {"message": "png file saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -72,17 +109,31 @@ async def frequency_alpha_miner(file: UploadFile = File(...)):
 @router.post("/heuristic_miner/")
 async def heuristic_miner_algo(file: UploadFile = File(...)):
     try:
-        await heuristic_miner(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        await heuristic_miner(temp_file_path)
         return {"message": "png file saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/heuristic_petri_net/")
-async def heuristic_miner_to_petrinet(file: UploadFile = File(...), fitness_approach: str = "token based",
-                                      precision_approach: str = "token based"):
+async def heuristic_miner_to_petrinet(fitness_approach: Quality_Type,
+                                  precision_approach: Quality_Type, file: UploadFile = File(...)):
     try:
-        zip = await heuristic_miner_petri(file, fitness_approach, precision_approach)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        zip = await heuristic_miner_petri(temp_file_path, fitness_approach, precision_approach)
         return zip
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -92,7 +143,13 @@ async def heuristic_miner_to_petrinet(file: UploadFile = File(...), fitness_appr
 async def heuristic_params(file: UploadFile = File(...), parameter: str = Query("dependency threshold"),
                            value: float = Query(0.5, ge=0, le=1)):
     try:
-        await heuristic_params_threshold(file, parameter, value)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        await heuristic_params_threshold(temp_file_path, parameter, value)
         return {"message": "png file saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -102,7 +159,13 @@ async def heuristic_params(file: UploadFile = File(...), parameter: str = Query(
 async def inductive_miner_algo(file: UploadFile = File(...),
                                noise_threshold: float = Query(0, ge=0, le=1)):
     try:
-        await inductive_miner(file, noise_threshold)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        await inductive_miner(temp_file_path, noise_threshold)
         return {"message": "petri net saved in png file"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -113,7 +176,13 @@ async def inductive_miner_qual(file: UploadFile = File(...),
                                noise_threshold: float = Query(0, ge=0, le=1), fitness_approach: str = "token based",
                                precision_approach: str = "token based"):
     try:
-        zip = await inductive_miner_quality(file, noise_threshold, fitness_approach, precision_approach)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        zip = await inductive_miner_quality(temp_file_path, noise_threshold, fitness_approach, precision_approach)
         return zip
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -122,7 +191,13 @@ async def inductive_miner_qual(file: UploadFile = File(...),
 @router.post("/inductive_process_tree/")
 async def inductive_miner_process_tree(file: UploadFile = File(...)):
     try:
-        await inductive_miner_tree(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        await inductive_miner_tree(temp_file_path)
         return {"message": "Process tree saved in file"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -131,17 +206,30 @@ async def inductive_miner_process_tree(file: UploadFile = File(...)):
 @router.post("/directly_follow_graph/")
 async def directly_follow_grap(file: UploadFile = File(...)):
     try:
-        result = await directly_follow(file)
-        return {"message": "png file saved","precision": result}
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        result = await directly_follow(temp_file_path)
+        return {"message": "png file saved", "precision": result}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/dfg_to_petrinet/")
 async def dfg_to_petrinet_quality(file: UploadFile = File(...), fitness_approach: str = "token based",
-                          precision_approach: str = "token based"):
+                                  precision_approach: str = "token based"):
     try:
-        zip = await dfg_petri_quality(file, fitness_approach, precision_approach)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        zip = await dfg_petri_quality(temp_file_path, fitness_approach, precision_approach)
         return zip
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -150,7 +238,14 @@ async def dfg_to_petrinet_quality(file: UploadFile = File(...), fitness_approach
 @router.post("/dfg_performance/")
 async def dfg_perf(file: UploadFile = File(...)):
     try:
-        await dfg_performance(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+
+        await dfg_performance(temp_file_path)
         return {"message": "png file saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -159,7 +254,13 @@ async def dfg_perf(file: UploadFile = File(...)):
 @router.post("/bpmn_model_inductive/")
 async def bpmn_mod(file: UploadFile = File(...)):
     try:
-        await bpmn_model(file)
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
+
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
+        await bpmn_model(temp_file_path)
         return {"message": "png file saved"}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -178,3 +279,4 @@ async def process_animation(file: UploadFile = File(...)):
             raise HTTPException(status_code=500, detail="R script execution failed.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
