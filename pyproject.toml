@@ -31,7 +31,10 @@ tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.gi
 pm4py = "2.7.8.4"
 discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"}
 clustering = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}
-
+Levenshtein = "^0.25.1"
+pyemd = "^1.0.0"
+mlxtend = "^0.23.1"
+prefixspan = "^0.5.2"
 
 [tool.poetry.group.dev.dependencies]
 
