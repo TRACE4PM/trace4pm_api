@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = [
     "Axel Gohier <axel.gohier@etudiant.univ-lr.fr>",
-    "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>"
+    "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>",
+    "Ania DAHACHE <ania.dahache@univ-lr.fr>"
     ]
 readme = "README.md"
 

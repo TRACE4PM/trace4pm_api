@@ -25,7 +25,6 @@ async def trace_based(
         file_content = await file.read()
         decode = io.StringIO(file_content.decode('utf-8'))
         result = trace_based_clustering(decode, algorithm, params)
-        # await create_collection(params.collection, current_user)
         files_paths = []
         log_directory = "temp/logs"
         for filename in os.listdir(log_directory):
@@ -51,7 +50,6 @@ async def vector_based(
 
     result = vector_based_clustering(decode, vector_representation.lower(), clustering_method, params)
 
-    # # await create_collection(params.collection, current_user)
     files_paths = []
     log_directory = "temp/logs"
     for filename in os.listdir(log_directory):
