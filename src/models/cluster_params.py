@@ -1,11 +1,6 @@
-# from ..base import Base_model
-from pydantic import BaseModel, Field, ValidationError
-from fastapi import UploadFile, File
-from typing import Literal, Dict
 from enum import Enum
-from typing import Optional, Union
-from ..models.collection import Collection_Create_Model, Collection_Model
-from ..models.users import User_Model
+from typing import Optional
+from ..base import Base_model
 
 
 class ClusteringMethod(str, Enum):
@@ -25,7 +20,7 @@ class VectorRepresentation(str, Enum):
     RelativeFrequency = "Relative Frequency Representation"
 
 
-class ClusteringParams(BaseModel):
+class ClusteringParams(Base_model):
     eps: Optional[float] = None
     min_samples: Optional[int] = None
     n_clusters: Optional[int] = None
