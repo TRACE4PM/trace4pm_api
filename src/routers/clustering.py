@@ -1,6 +1,6 @@
 from typing import Union, List, Annotated, Dict, Any
 from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query, Request, Depends, Body
-from clustering.main import trace_based_clustering, vector_based_clustering, feature_based_clustering
+from clustering.main import trace_based_clustering, vector_based_clustering, feature_based_clustering, fss_meanshift
 import io
 import os
 from .collection import create_collection
@@ -8,6 +8,7 @@ from ..models.collection import Collection_Create_Model, Collection_Model
 from ..models.users import User_Model
 from ..security import get_current_active_user
 from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, VectorRepresentation
+from ..models.cluster_params import ClusteringMethodFss
 from src.clustering_utils import post_clusters
 import pandas as pd
 
@@ -38,7 +39,7 @@ async def trace_based(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/vector_based/")
+@router.post("/feature_based/")
 async def vector_based(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
         clustering_method: ClusteringMethod, vector_representation: VectorRepresentation, distance : DistanceMeasure,
@@ -61,12 +62,18 @@ async def vector_based(
     return result
 
 
-# @router.post("/feature_based/fss")
-# async def fss_encoding(
-#         file: UploadFile = File(...)):
-#
-#     file_content = await file.read()
-#     decode = io.StringIO(file_content.decode('utf-8'))
-#
-#     result = feature_based_clustering(decode)
-#     return result
+@router.post("/feature_based/fss")
+async def fss_encoding(
+        clustering_method: ClusteringMethodFss, distance: DistanceMeasure,
+        params: ClusteringParams = Depends(), file: UploadFile = File(...)):
+
+    file_content = await file.read()
+    decode = io.StringIO(file_content.decode('utf-8'))
+    params.distance = distance.lower()
+
+    if clustering_method == "Meanshift":
+        result = fss_meanshift(decode, params)
+    else :
+        result = feature_based_clustering(decode, clustering_method, params)
+
+    return result

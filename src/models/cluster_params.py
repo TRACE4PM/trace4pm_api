@@ -8,6 +8,12 @@ class ClusteringMethod(str, Enum):
     DBSCAN = "DBScan"
 
 
+class ClusteringMethodFss(str, Enum):
+    Agglomerative = "Agglomerative"
+    DBSCAN = "DBScan"
+    Meanshift = "Meanshift"
+
+
 class DistanceMeasure(str, Enum):
     Jaccard = "Jaccard"
     Hamming = "Hamming"
@@ -21,10 +27,15 @@ class VectorRepresentation(str, Enum):
 
 
 class ClusteringParams(Base_model):
-    eps: Optional[float] = None
+    """
+           epsilon and min_samples parameters for DBScan algorithm
+           nbr_cluster and linkage criteria for Agglomerative algorithm
+           distance: distance measure for feature based clustering,
+       """
+
+    epsilon: Optional[float] = None
     min_samples: Optional[int] = None
-    n_clusters: Optional[int] = None
+    nbr_clusters: Optional[int] = None
     linkage: Optional[str] = None
     distance: Optional[str] = None
     collection: Optional[str] = None
-
