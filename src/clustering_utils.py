@@ -61,9 +61,8 @@ async def post_clusters(
             list_client = await csv_parser(
                 file=file, collection=list_client, parameters=tmp  # type: ignore
             )
-            # Remove the old clients from the collection
-            # await purge_collection(collection)
-            # Add the client (old and new) to the collection
+
+            # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
             # add the file to the hash list
@@ -78,31 +77,10 @@ async def post_clusters(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="All files have already been parsed",
         )
-    # Else, return a report
+
     else:
         return {
             "message": "File(s) added to the collection",
             "files added to the collection": list_file_write,
             "files already in the collection": list_file_deleted,
         }
-
-# async def post_clusters(current_user,collection, df):
-#     # inserted_ids = []
-#     # for f in files:
-#     #     contents = await f.read()
-#         # csv_data = io.StringIO(contents.decode('utf-8'))
-#
-#         # reader = csv.DictReader(csv_data)
-#
-#     collection_db = await collection_exists(current_user.username, collection)
-#     df = df.to_dict(orient="records")
-#     collection.insert_many(df)
-#
-#     file_hash = await compute_sha256(file_path)
-#
-#     await user_collection.update_one(
-#         {"username": current_user.username, "collections.name": collection},
-#         {"$push": {"collections.$.files_hash": file_hash}},
-#     )
-#
-#     return {"message": f"CSV files uploaded and saved to MongoDB "}

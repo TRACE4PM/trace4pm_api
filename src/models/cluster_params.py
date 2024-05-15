@@ -5,12 +5,12 @@ from ..base import Base_model
 
 class ClusteringMethod(str, Enum):
     Agglomerative = "Agglomerative"
-    DBSCAN = "DBScan"
+    DBSCAN = "DBSCAN"
 
 
 class ClusteringMethodFss(str, Enum):
     Agglomerative = "Agglomerative"
-    DBSCAN = "DBScan"
+    DBSCAN = "DBSCAN"
     Meanshift = "Meanshift"
 
 
