@@ -1,14 +1,15 @@
 from typing import Union, List, Annotated, Dict, Any
 from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query, Request, Depends, Body
-from clustering.main import trace_based_clustering, vector_based_clustering, feature_based_clustering, fss_meanshift
+from clustering.main import (trace_based_clustering, vector_based_clustering, feature_based_clustering,
+                             fss_meanshift, fss_euclidean_distance)
 import io
 import os
 from .collection import create_collection
 from ..models.collection import Collection_Create_Model, Collection_Model
 from ..models.users import User_Model
 from ..security import get_current_active_user
-from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, VectorRepresentation
-from ..models.cluster_params import ClusteringMethodFss
+from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, VectorRepresentation, LinkageCriteria
+from ..models.cluster_params import ClusteringMethodFss, FssDistanceMeasure,FssClusteringParams
 from src.clustering_utils import post_clusters
 import pandas as pd
 
@@ -21,11 +22,12 @@ router = APIRouter(
 @router.post("/trace/")
 async def trace_based(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        algorithm: ClusteringMethod, params: ClusteringParams = Depends(), file: UploadFile = File(...)):
+        algorithm: ClusteringMethod, linkage: LinkageCriteria,params: ClusteringParams = Depends(), file: UploadFile = File(...)):
     try:
         file_content = await file.read()
         # Decode file content
         decode = io.StringIO(file_content.decode('utf-8'))
+        params.linkage = linkage.lower()
         # Perform trace-based clustering
         result = trace_based_clustering(decode, algorithm, params)
         # save the resulting log files in the user's collection
@@ -45,11 +47,12 @@ async def trace_based(
 @router.post("/feature_based/")
 async def vector_representation(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        clustering_method: ClusteringMethod, vector_representation: VectorRepresentation, distance : DistanceMeasure,
+        clustering_method: ClusteringMethod, linkage: LinkageCriteria, vector_representation: VectorRepresentation, distance : DistanceMeasure,
         params: ClusteringParams = Depends(), file: UploadFile = File(...)):
 
     file_content = await file.read()
     decode = io.StringIO(file_content.decode('utf-8'))
+    params.linkage = linkage.lower()
     params.distance = distance.lower()
     #perform feature based clustering based on the vector representation and algorithm chosen by the user
     result = vector_based_clustering(decode, vector_representation.lower(), clustering_method, params)
@@ -68,17 +71,17 @@ async def vector_representation(
 
 @router.post("/feature_based/fss")
 async def fss_encoding(
-        clustering_method: ClusteringMethodFss, distance: DistanceMeasure,
+        clustering_method: ClusteringMethodFss, linkage: LinkageCriteria, distance: FssDistanceMeasure,
         params: ClusteringParams = Depends(), file: UploadFile = File(...)):
 
     file_content = await file.read()
     decode = io.StringIO(file_content.decode('utf-8'))
     params.distance = distance.lower()
-
+    params.linkage = linkage.lower()
     # chosing the clustering algorithm and performing clustering on fss encoding vectors
     if clustering_method == "Meanshift":
         result = fss_meanshift(decode, params)
     else :
-        result = feature_based_clustering(decode, clustering_method, params)
+        result = fss_euclidean_distance(decode, params.nbr_clusters, 80, 0)
 
     return result

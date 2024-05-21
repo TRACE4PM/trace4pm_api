@@ -1,10 +1,6 @@
-# import aiofiles
 import os
 from typing import List, Annotated
 from fastapi import HTTPException, UploadFile, status, File, Depends
-import csv
-import io
-
 from parser.main import csv_parser
 from parser.models.csv_parameters import CsvParameters
 from .client_utils import get_clients_from_collection, post_clients_in_collection
