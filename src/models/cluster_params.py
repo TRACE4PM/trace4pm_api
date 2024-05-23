@@ -37,12 +37,11 @@ class ClusteringParams(Base_model):
            nbr_cluster and linkage criteria for Agglomerative algorithm
            distance: distance measure for feature based clustering,
        """
-
     epsilon: Optional[float] = None
     min_samples: Optional[int] = None
     nbr_clusters: Optional[int] = None
     linkage: Optional[str] = None
-    distance: Optional[str] = None
+    distance:Optional[str] = None
     collection: Optional[str] = None
 
 
@@ -59,6 +58,7 @@ class FssClusteringParams(Base_model):
         nbr_cluster and linkage critetia for agglomerative algorithm
         distance: distance measure for feature based clustering,
     """
+    distance: Optional[FssDistanceMeasure]
     epsilon: Optional[float] = None
     min_samples: Optional[int] = None
     nbr_clusters: Optional[int] = None

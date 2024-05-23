@@ -37,7 +37,7 @@ async def post_clusters(
     tmp = CsvParameters(
         separator=";",
         timestamp_column="timestamp",
-        timestamp_format="%Y-%m-%d %H:%M:%S%z",
+        timestamp_format="%Y-%m-%d %H:%M:%S",
         action_column="action",
         session_id_column="client_id",
         session_time_limit=3600,
@@ -80,3 +80,11 @@ async def post_clusters(
             "files added to the collection": list_file_write,
             "files already in the collection": list_file_deleted,
         }
+
+
+def empty_directory(directory_path):
+    # Remove the files already existing a directory
+    if os.path.exists(directory_path):
+        files = os.listdir(directory_path)
+        for file in files:
+            os.remove(os.path.join(directory_path, file))
