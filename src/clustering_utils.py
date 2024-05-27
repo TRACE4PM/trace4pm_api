@@ -1,8 +1,11 @@
 import os
-from typing import List, Annotated
+import pandas as pd
+from datetime import datetime
+from typing import List, Annotated, Dict, Any
 from fastapi import HTTPException, UploadFile, status, File, Depends
 from parser.main import csv_parser
 from parser.models.csv_parameters import CsvParameters
+from parser.models.session import Session_Model
 from .client_utils import get_clients_from_collection, post_clients_in_collection
 from .collection_utils import collection_exists, get_hashed_files, purge_collection
 from .database.config import user_collection
@@ -10,6 +13,10 @@ from .models.users import User_Model
 from .security import get_current_active_user
 from .users_utils import user_exists
 from .utils import compute_sha256
+from .stats_utils import get_traces, get_clients_action
+from .models.cluster_params import Request_Model
+from parser.models.client import Client_Model
+
 
 
 async def post_clusters(
@@ -17,14 +24,19 @@ async def post_clusters(
         collection,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
 ):
-
     # Check if the user exist
     print('!!!!!!!!!!! CSV PARSER !!!!!!!!')
 
     await user_exists(current_user.username)
     # Check if the collection exist
     collection_db = await collection_exists(current_user.username, collection)
-    print("col db", collection_db)
+
+    if collection_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Collection not found"
+        )
+
     # Check if at least one file is provided
     if not files.__contains__:
         raise HTTPException(
@@ -41,10 +53,11 @@ async def post_clusters(
         action_column="action",
         session_id_column="client_id",
         session_time_limit=3600,
+        cluster_id = "cluster_id"
     )
 
     for file in files:
-        print(file)
+
         filename = os.path.basename(file)
         file_hash = await compute_sha256(file)
 
@@ -54,7 +67,7 @@ async def post_clusters(
         else:
             # Parse the file
             list_client = await get_clients_from_collection(collection_db)
-            list_client = await csv_parser(
+            list_client = csv_parser(
                 file=file, collection=list_client, parameters=tmp  # type: ignore
             )
 
@@ -88,3 +101,4 @@ def empty_directory(directory_path):
         files = os.listdir(directory_path)
         for file in files:
             os.remove(os.path.join(directory_path, file))
+

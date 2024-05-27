@@ -109,11 +109,16 @@ async def post_csv_file(
         files: list[UploadFile],
         collection: str,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        timestamp_column: str= "Time",timestamp_format: str= "%Y-%m-%d %H:%M:%S",
+        action_column: str= "Event name", session_id_column: str="User full name",separator: str = ","
+
 ):
     """Route to send logs files to the server and add it to the collection(once parsed)
 
 
     Args:
+        current_user:
+        tmp:
         files (list[UploadFile]): A list of file to parse
         collection (str): name of the collection
 
@@ -140,11 +145,11 @@ async def post_csv_file(
     #     parser_format='%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
     # )
     tmp = CsvParameters(
-        separator=",",
-        timestamp_column="timestamp",
-        timestamp_format="%d/%m/%y, %H:%M",
-        action_column="Description",
-        session_id_column="User full name",
+        separator=separator,
+        timestamp_column=timestamp_column,
+        timestamp_format=timestamp_format,
+        action_column=action_column,
+        session_id_column=session_id_column,
         session_time_limit=3600,
     )
 
@@ -165,7 +170,7 @@ async def post_csv_file(
 
             list_client = await get_clients_from_collection(collection_db)
 
-            list_client = await csv_parser(
+            list_client = csv_parser(
                 file=file_path, collection=list_client, parameters=tmp  # type: ignore
             )
 

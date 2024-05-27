@@ -16,6 +16,7 @@ def trace_handler(trace):
 def trace_handler_action(trace):
     clients_action = list()
     requests = trace["sessions"]["requests"]
+    print("requests")
     client_id = trace['client_id']+"-"+str(trace["sessions"]["session_id"])
     clients_action = [build_action(client_id, request) for request in requests]
     return clients_action
