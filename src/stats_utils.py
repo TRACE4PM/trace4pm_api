@@ -51,6 +51,7 @@ async def get_clients_action(collection_db):
                                 "cond": {"$ne": ["$$request.request_tag", "Outliers"]},
                             }
                         },
+                        "action": "$sessions.requests.request_url"
                     }
                 },
                 {"$match": {"sessions.requests": {"$ne": []}}},

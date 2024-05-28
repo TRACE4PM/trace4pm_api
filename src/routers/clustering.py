@@ -13,8 +13,7 @@ from ..models.users import User_Model
 from ..security import get_current_active_user
 from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, VectorRepresentation, LinkageCriteria
 from ..models.cluster_params import ClusteringMethodFss, FssDistanceMeasure,FssClusteringParams
-from src.clustering_utils import post_clusters, empty_directory, get_clusters, store_file_content
-import pandas as pd
+from src.clustering_utils import post_clusters, empty_directory
 from ..collection_utils import collection_exists
 
 router = APIRouter(
@@ -42,11 +41,12 @@ async def trace_based(
         # save the resulting log files in the user's collection
         files_paths = []
         log_directory = "temp/logs"
+        # retrieve the files stored in the log directory
         for filename in os.listdir(log_directory):
             if filename.startswith("cluster_log_"):
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
-        print("files pathh ",files_paths)
+
         await post_clusters(files_paths, params.collection, current_user)
         return result
     except HTTPException as e:
@@ -57,7 +57,7 @@ async def trace_based(
 
 @router.post("/feature_based/")
 async def vector_representation(
-        # current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
         clustering_method: ClusteringMethod, linkage: LinkageCriteria, vector_representation: VectorRepresentation, distance : DistanceMeasure,
         params: ClusteringParams = Depends(), file: UploadFile = File(...)):
     """
@@ -65,27 +65,35 @@ async def vector_representation(
         frequency vectors
 
     """
-    file_content = await file.read()
-    decode = io.StringIO(file_content.decode('utf-8'))
-    params.linkage = linkage.lower()
-    params.distance = distance.lower()
-    #perform feature based clustering based on the vector representation and algorithm chosen by the user
-    result, nb = vector_based_clustering(decode, vector_representation.lower(), clustering_method, params)
-    # save the resulting log files in the user's collection
-    files_paths = []
-    log_directory = "temp/logs"
-    for filename in os.listdir(log_directory):
-        if filename.startswith("cluster_log_"):
-            file_path = os.path.join(log_directory, filename)
-            files_paths.append(file_path)
-    print("files pathh ", files_paths)
-    # await post_clusters(files_paths, params.collection, current_user)
-    result["Number of traces"] = nb["Number of traces"]
-    return result
+    try:
+        file_content = await file.read()
+        decode = io.StringIO(file_content.decode('utf-8'))
+        params.linkage = linkage.lower()
+        params.distance = distance.lower()
+        #perform feature based clustering based on the vector representation and algorithm chosen by the user
+        result, nb = vector_based_clustering(decode, vector_representation.lower(), clustering_method, params)
+        result["Number of traces"] = nb["Number of traces"]
+        result["Number unique traces"] = nb["Number unique traces"]
+        # save the resulting log files in the user's collection
+        files_paths = []
+        log_directory = "temp/logs"
+        for filename in os.listdir(log_directory):
+            if filename.startswith("cluster_log_"):
+                file_path = os.path.join(log_directory, filename)
+                files_paths.append(file_path)
+        await post_clusters(files_paths, params.collection, current_user)
+
+        return result
+    except HTTPException as e:
+        raise e
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @router.post("/feature_based/fss")
 async def fss_encoding(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)],
         clustering_method: ClusteringMethodFss, linkage: LinkageCriteria,
         params: FssClusteringParams = Depends(), file: UploadFile = File(...)):
     """
@@ -95,47 +103,64 @@ async def fss_encoding(
         Agglomerative with Ward linkage and Euclidean distance
 
     """
-    file_content = await file.read()
-    decode = io.StringIO(file_content.decode('utf-8'))
-    params.linkage = linkage.lower()
-    # chosing the clustering algorithm and performing clustering on fss encoding vectors
-    if linkage == "Ward" and params.distance == "Euclidean":
-        result,nb = fss_euclidean_distance(decode, params.nbr_clusters, params.min_support, params.min_length)
-    else:
-        result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
+    try :
 
-    files_paths = []
-    log_directory = "temp/logs"
-    for filename in os.listdir(log_directory):
-        if filename.startswith("cluster_log_"):
-            file_path = os.path.join(log_directory, filename)
-            files_paths.append(file_path)
-    print("files pathh ", files_paths)
-    result["Number of traces"] = nb["Number of traces"]
-    return result
+        file_content = await file.read()
+        decode = io.StringIO(file_content.decode('utf-8'))
+        params.linkage = linkage.lower()
+        # chosing the clustering algorithm and performing clustering on fss encoding vectors
+        if linkage == "Ward" and params.distance == "Euclidean":
+            result,nb = fss_euclidean_distance(decode, params.nbr_clusters, params.min_support, params.min_length)
+        else:
+            result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
+        result["Number of traces"] = nb["Number of traces"]
+        result["Number unique traces"] = nb["Number unique traces"]
+        files_paths = []
+        log_directory = "temp/logs"
+        for filename in os.listdir(log_directory):
+            if filename.startswith("cluster_log_"):
+                file_path = os.path.join(log_directory, filename)
+                files_paths.append(file_path)
+        await post_clusters(files_paths, params.collection, current_user)
+
+        return result
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/feature_based/fss_meanshift")
 async def fss_meanshift_algo(
-        distance: DistanceMeasure,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        distance: DistanceMeasure, collection: str,
         min_support:int = 80 ,min_length: int = 0 , file: UploadFile = File(...)):
     """
      Feature based clustering using Meanshift algorithm, the distance measures used can be  Jaccard
     Hamming or Cosine distance
     """
-    file_content = await file.read()
-    decode = io.StringIO(file_content.decode('utf-8'))
-    result, nb = fss_meanshift(decode, distance.lower(), min_support, min_length)
-    files_paths = []
-    log_directory = "temp/logs"
-    for filename in os.listdir(log_directory):
-        if filename.startswith("cluster_log_"):
-            file_path = os.path.join(log_directory, filename)
-            files_paths.append(file_path)
+    try:
+        file_content = await file.read()
+        decode = io.StringIO(file_content.decode('utf-8'))
+        result, nb = fss_meanshift(decode, distance.lower(), min_support, min_length)
+        result["Number of traces"] = nb["Number of traces"]
+        result["Number unique traces"] = nb["Number unique traces"]
+        files_paths = []
+        log_directory = "temp/logs"
+        for filename in os.listdir(log_directory):
+            if filename.startswith("cluster_log_"):
+                file_path = os.path.join(log_directory, filename)
+                files_paths.append(file_path)
+        await post_clusters(files_paths, collection, current_user)
 
-    print("files pathh ", files_paths)
-    result["Number of traces"] = nb["Number of traces"]
-    result["logs_path"] = files_paths
-    return result
+        return result
+    except HTTPException as e:
+        raise e
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.get("/get_clusters")
 async def get_clusters_func( collection: str,
@@ -162,7 +187,7 @@ async def get_clusters_func( collection: str,
             )
 
         # Create a directory to store the CSV files
-        directory = "src/clusters"
+        directory = "src/temp/clusters"
         if not os.path.exists(directory):
             os.makedirs(directory)
             print(f"Directory {directory} created.")
@@ -200,8 +225,6 @@ async def get_clusters_func( collection: str,
                         request.get("request_url"),
                         request.get("request_time")
                     ])
-                    print(
-                        f"Row written for cluster {cluster_id}: {client_id}, {request.get('request_url')},{request.get('request_time')},")
 
         # Close all files
         for writer, file in writers.values():
@@ -209,7 +232,13 @@ async def get_clusters_func( collection: str,
             file_paths.append(file.name)
             print(f"File closed: {file.name}")
 
-        return {"message": "Documents have been saved as CSV files.", "file_paths": file_paths}
+        file_contents = {}
+        for file_path in file_paths:
+            with open(file_path, "r") as f:
+                reader = csv.reader(f, delimiter=";")
+                file_contents[file_path] = list(reader)
+
+        return {"message": "Documents have been saved as CSV files.", "file_contents": file_contents}
 
     except HTTPException as e:
         raise e

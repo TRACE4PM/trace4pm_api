@@ -13,9 +13,6 @@ from .models.users import User_Model
 from .security import get_current_active_user
 from .users_utils import user_exists
 from .utils import compute_sha256
-from .stats_utils import get_traces, get_clients_action
-from .models.cluster_params import Request_Model
-from parser.models.client import Client_Model
 
 
 
@@ -70,7 +67,7 @@ async def post_clusters(
             list_client = csv_parser(
                 file=file, collection=list_client, parameters=tmp  # type: ignore
             )
-
+            print("list clients", list_client)
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)

@@ -66,12 +66,6 @@ class FssClusteringParams(Base_model):
     linkage: Optional[str] = None
     min_support: Optional[int] = 80
     min_length: Optional[int] = 0
+    collection: Optional[str] = None
 
 
-class Request_Model(Base_model):
-    request_id: str
-    request_time: datetime | None = None
-    request_url: str | None = None
-    response_code: str | None = None
-    referer: str | None = None
-    cluster_id:  Optional[str] = None
