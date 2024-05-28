@@ -191,6 +191,8 @@ async def get_clusters_func( collection: str,
         if not os.path.exists(directory):
             os.makedirs(directory)
             print(f"Directory {directory} created.")
+        else:
+            empty_directory("src/temp/clusters")
 
         # Dictionary to keep track of file writers for each cluster_id
         writers = {}
