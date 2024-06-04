@@ -25,7 +25,18 @@ async def trace_based(
     """
         Trace based clustering using levenshtein distance measure, and choosing the clustering algorithm and
         the parameters for each algorithm
+    Args:
+        clustering_method: Agglomerative or DBSCAN
+        linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
 
+        params: parameters of each clustering algorithm
+            epsilon and min_samples => DBSCAN
+            n_cluster and linkage criteria => Agglomerative
+        file: log file
+    Returns:
+        Davis bouldin score
+        Number of clusters
+        Silhouette score of the clustering and for each cluster
     """
     try:
         file_content = await file.read()
@@ -59,6 +70,20 @@ async def vector_representation(
     """
         Feature based clustering by representing the data as binary vectors, frequency vectors or relative
         frequency vectors
+    Args:
+        clustering_method: Agglomerative or DBSCAN
+        linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
+        vector_representation: convert the trace to a vector representation either with Binary, Frequency based, or Relative frequency
+        representation
+        distance: distance measure for the clustering, either Hamming, Jaccard or Cosine distance
+        params: parameters of each clustering algorithm
+            epsilon and min_samples => DBSCAN
+            n_cluster and linkage criteria => Agglomerative
+        file: log file
+    Returns:
+        Davis bouldin score
+        Number of clusters
+        Silhouette score of the clustering and for each cluster
 
     """
     try:
@@ -93,12 +118,25 @@ async def fss_encoding(
         clustering_method: ClusteringMethodFss, linkage: LinkageCriteria,
         params: FssClusteringParams = Depends(), file: UploadFile = File(...)):
     """
-     Feature based clustering where the data are encoded using the improved FSS encoding approach
-     clustering methods can be:
-        Agglomerative, DBSCAN, Meanshift with any distance measure and parameters/ or
-        Agglomerative with Ward linkage and Euclidean distance
+    Feature based clustering where the data are encoded using the improved FSS encoding approach
+
+    Args:
+        clustering_method: Agglomerative, DBSCAN, or Meanshift with any distance measure and parameters/ or
+            Agglomerative with Ward linkage and Euclidean distance
+        linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
+            and Ward works only with Euclidean distance
+        params: parameters of each clustering algorithm
+            epsilon and min_samples => DBSCAN
+            n_cluster and linkage criteria => Agglomerative
+            distance : either Jaccard, Cosine, or Hamming distance
+       file: log file
+    Returns:
+        Davis bouldin score
+        Number of clusters
+        Silhouette score of the clustering and for each cluster
 
     """
+
     try :
 
         file_content = await file.read()
@@ -131,10 +169,24 @@ async def fss_encoding(
 async def fss_meanshift_algo(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
         distance: DistanceMeasure, collection: str,
-        min_support:int = 80 ,min_length: int = 0 , file: UploadFile = File(...)):
+        min_support:int = 99 ,min_length: int = 9 , file: UploadFile = File(...)):
     """
-     Feature based clustering using Meanshift algorithm, the distance measures used can be  Jaccard
+         Feature based clustering using Meanshift algorithm, the distance measures used can be  Jaccard
     Hamming or Cosine distance
+
+    Args:
+        distance: Distance measure, either Jaccard, Cosine, or Hamming distance
+        collection: name of the collection where we will store the resulting clusters
+        min_support/min_length: Fss encoding parameters to calculate the frequent subsequences
+
+        file: log file
+
+    Returns:
+        Davis bouldin score
+        Number of clusters
+        Silhouette score of the clustering and for each cluster
+
+
     """
     try:
         file_content = await file.read()

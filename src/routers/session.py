@@ -72,7 +72,6 @@ async def get_request_count(collection: str, client_id: str, current_user: Annot
         for i, sess in enumerate(session['sessions']):
             num_requests = len(sess['requests'])
             nb_requests.append({"session": i + 1, "number_requests": num_requests})
-            print(f"  Session {i + 1} has {num_requests} requests")
 
     return nb_requests
 
