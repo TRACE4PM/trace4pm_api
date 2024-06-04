@@ -67,7 +67,7 @@ async def post_clusters(
             list_client = csv_parser(
                 file=file, collection=list_client, parameters=tmp  # type: ignore
             )
-            print("list clients", list_client)
+
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)

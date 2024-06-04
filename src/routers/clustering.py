@@ -1,20 +1,16 @@
-import tempfile
 import csv
-import json
-from typing import Union, List, Annotated, Dict, Any
-from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query, Request, Depends, Body,status
-from clustering.main import (trace_based_clustering, vector_based_clustering, feature_based_clustering,
-                             fss_meanshift, fss_euclidean_distance)
 import io
 import os
-from .collection import create_collection
-from ..models.collection import Collection_Create_Model, Collection_Model
+from fastapi import APIRouter, Body, Depends, File, HTTPException, Query, Request, status, UploadFile
+from typing import Annotated
+from ..collection_utils import collection_exists
+from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, LinkageCriteria, VectorRepresentation
+from ..models.cluster_params import ClusteringMethodFss, FssClusteringParams, FssDistanceMeasure
 from ..models.users import User_Model
 from ..security import get_current_active_user
-from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, VectorRepresentation, LinkageCriteria
-from ..models.cluster_params import ClusteringMethodFss, FssDistanceMeasure,FssClusteringParams
-from src.clustering_utils import post_clusters, empty_directory
-from ..collection_utils import collection_exists
+from clustering.main import (feature_based_clustering, fss_euclidean_distance, fss_meanshift,
+                             trace_based_clustering, vector_based_clustering)
+from src.clustering_utils import empty_directory, post_clusters
 
 router = APIRouter(
     prefix="/clustering",
@@ -166,7 +162,7 @@ async def fss_meanshift_algo(
 async def get_clusters_func( collection: str,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
 ):
-    """Function to get a json object from a collection
+    """Route to get a json object from a collection
 
     Args:
         collection (str): collection name

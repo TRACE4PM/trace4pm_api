@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 
-from src.routers import client, collection, files, request, stats, tags, token, users, discover, clustering
+from src.routers import client, collection, files, request, stats, tags, token, users, discover, clustering, session
 from src.security import oauth2_scheme
 
 app = FastAPI()
@@ -17,4 +17,5 @@ app.include_router(request.router)
 app.include_router(stats.router)
 app.include_router(discover.router)
 app.include_router(clustering.router)
+app.include_router(session.router)
 

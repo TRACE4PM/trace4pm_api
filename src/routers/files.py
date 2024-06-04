@@ -173,7 +173,6 @@ async def post_csv_file(
             list_client = csv_parser(
                 file=file_path, collection=list_client, parameters=tmp  # type: ignore
             )
-            print("list clients", list_client)
             # Remove the old clients from the collection
             await purge_collection(collection)
             # Add the client (old and new) to the collection
