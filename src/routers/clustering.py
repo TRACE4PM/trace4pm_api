@@ -112,103 +112,99 @@ async def vector_representation(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/feature_based/fss")
-async def fss_encoding(
-    current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        clustering_method: ClusteringMethodFss, linkage: LinkageCriteria,
-        params: FssClusteringParams = Depends(), file: UploadFile = File(...)):
-    """
-    Feature based clustering where the data are encoded using the improved FSS encoding approach
+# TODO:
+#  FSS encoding takes too much time, trying to fix it
 
-    Args:
-        clustering_method: Agglomerative, DBSCAN, or Meanshift with any distance measure and parameters/ or
-            Agglomerative with Ward linkage and Euclidean distance
-        linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
-            and Ward works only with Euclidean distance
-        params: parameters of each clustering algorithm
-            epsilon and min_samples => DBSCAN
-            n_cluster and linkage criteria => Agglomerative
-            distance : either Jaccard, Cosine, or Hamming distance
-       file: log file
-    Returns:
-        Davis bouldin score
-        Number of clusters
-        Silhouette score of the clustering and for each cluster
-
-    """
-
-    try :
-
-        file_content = await file.read()
-        decode = io.StringIO(file_content.decode('utf-8'))
-        params.linkage = linkage.lower()
-        # chosing the clustering algorithm and performing clustering on fss encoding vectors
-        if linkage == "Ward" and params.distance == "Euclidean":
-            result,nb = fss_euclidean_distance(decode, params.nbr_clusters, params.min_support, params.min_length)
-        else:
-            result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
-        result["Number of traces"] = nb["Number of traces"]
-        result["Number unique traces"] = nb["Number unique traces"]
-        files_paths = []
-        log_directory = "temp/logs"
-        for filename in os.listdir(log_directory):
-            if filename.startswith("cluster_log_"):
-                file_path = os.path.join(log_directory, filename)
-                files_paths.append(file_path)
-        await post_clusters(files_paths, params.collection, current_user)
-
-        return result
-
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-
-@router.post("/feature_based/fss_meanshift")
-async def fss_meanshift_algo(
-        current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        distance: DistanceMeasure, collection: str,
-        min_support:int = 99 ,min_length: int = 9 , file: UploadFile = File(...)):
-    """
-         Feature based clustering using Meanshift algorithm, the distance measures used can be  Jaccard
-    Hamming or Cosine distance
-
-    Args:
-        distance: Distance measure, either Jaccard, Cosine, or Hamming distance
-        collection: name of the collection where we will store the resulting clusters
-        min_support/min_length: Fss encoding parameters to calculate the frequent subsequences
-
-        file: log file
-
-    Returns:
-        Davis bouldin score
-        Number of clusters
-        Silhouette score of the clustering and for each cluster
-
-
-    """
-    try:
-        file_content = await file.read()
-        decode = io.StringIO(file_content.decode('utf-8'))
-        result, nb = fss_meanshift(decode, distance.lower(), min_support, min_length)
-        result["Number of traces"] = nb["Number of traces"]
-        result["Number unique traces"] = nb["Number unique traces"]
-        files_paths = []
-        log_directory = "temp/logs"
-        for filename in os.listdir(log_directory):
-            if filename.startswith("cluster_log_"):
-                file_path = os.path.join(log_directory, filename)
-                files_paths.append(file_path)
-        await post_clusters(files_paths, collection, current_user)
-
-        return result
-    except HTTPException as e:
-        raise e
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
+#
+# @router.post("/feature_based/fss")
+# async def fss_encoding(
+#     current_user: Annotated[User_Model, Depends(get_current_active_user)],
+#         # clustering_method: ClusteringMethodFss, linkage: LinkageCriteria,
+#         collection : str,
+#         nbr_clusters : int, min_support: int = 99, min_length: int = 9,file: UploadFile = File(...)):
+#     """
+#     Feature based clustering where the data are encoded using the improved FSS encoding approach
+#
+#     Args:
+#        file: log file
+#     Returns:
+#         Davis bouldin score
+#         Number of clusters
+#         Silhouette score of the clustering and for each cluster
+#
+#     """
+#
+#     try :
+#
+#         file_content = await file.read()
+#         decode = io.StringIO(file_content.decode('utf-8'))
+#         # chosing the clustering algorithm and performing clustering on fss encoding vectors
+#         # if linkage == "Ward" and params.distance == "Euclidean":
+#         result,nb = fss_euclidean_distance(decode, nbr_clusters, min_support, min_length)
+#         # else:
+#         #     result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
+#         result["Number of traces"] = nb["Number of traces"]
+#         result["Number unique traces"] = nb["Number unique traces"]
+#         files_paths = []
+#         log_directory = "temp/logs"
+#         for filename in os.listdir(log_directory):
+#             if filename.startswith("cluster_log_"):
+#                 file_path = os.path.join(log_directory, filename)
+#                 files_paths.append(file_path)
+#         await post_clusters(files_paths, collection, current_user)
+#
+#         return result
+#
+#     except HTTPException as e:
+#         raise e
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#
+#
+# @router.post("/feature_based/fss_meanshift")
+# async def fss_meanshift_algo(
+#         current_user: Annotated[User_Model, Depends(get_current_active_user)],
+#         distance: DistanceMeasure, collection: str,
+#         min_support:int = 99 ,min_length: int = 9 , file: UploadFile = File(...)):
+#     """
+#          Feature based clustering using Meanshift algorithm, the distance measures used can be  Jaccard
+#     Hamming or Cosine distance
+#
+#     Args:
+#         distance: Distance measure, either Jaccard, Cosine, or Hamming distance
+#         collection: name of the collection where we will store the resulting clusters
+#         min_support/min_length: Fss encoding parameters to calculate the frequent subsequences
+#
+#         file: log file
+#
+#     Returns:
+#         Davis bouldin score
+#         Number of clusters
+#         Silhouette score of the clustering and for each cluster
+#
+#
+#     """
+#     try:
+#         file_content = await file.read()
+#         decode = io.StringIO(file_content.decode('utf-8'))
+#         result, nb = fss_meanshift(decode, distance.lower(), min_support, min_length)
+#         result["Number of traces"] = nb["Number of traces"]
+#         result["Number unique traces"] = nb["Number unique traces"]
+#         files_paths = []
+#         log_directory = "temp/logs"
+#         for filename in os.listdir(log_directory):
+#             if filename.startswith("cluster_log_"):
+#                 file_path = os.path.join(log_directory, filename)
+#                 files_paths.append(file_path)
+#         await post_clusters(files_paths, collection, current_user)
+#
+#         return result
+#     except HTTPException as e:
+#         raise e
+#
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#
 
 @router.get("/get_clusters")
 async def get_clusters_func( collection: str,
@@ -295,3 +291,5 @@ async def get_clusters_func( collection: str,
     except Exception as e:
         print(f"Error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+

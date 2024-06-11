@@ -29,7 +29,7 @@ pytest = "^7.3.1"
 parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git", branch = "discovery"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.git"}
-pm4py = "2.7.8.4"
+pm4py = "2.7.11.10"
 discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"}
 clustering = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}
 Levenshtein = "^0.25.1"

@@ -23,7 +23,7 @@ async def create_collection(
     collection: Collection_Create_Model,
     current_user: Annotated[User_Model, Depends(get_current_active_user)],
 ) -> Collection_Model:
-    collection.name = collection.name.lower()
+    collection.name = collection.name
     # check if user exist
     await user_exists(current_user.username)
     # Check if collection name already exist

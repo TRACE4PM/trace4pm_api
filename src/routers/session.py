@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.get("/sessions_count", status_code=status.HTTP_200_OK, description="Get the number of sessions for a giving client")
-async def get_number_sessions(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]) -> int:
+async def get_number_sessions(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
     """This route gets the total number of sessions for a specific client
 
     Args:
@@ -39,7 +39,8 @@ async def get_number_sessions(collection: str, client_id: str, current_user: Ann
 
     total_sessions = len(client_document.get("sessions", []))
 
-    return total_sessions
+    return {"User id": client_id, "total_sessions": total_sessions}
+
 
 @router.get("/requests_count", status_code=status.HTTP_200_OK, description="Get count of requests for a giving client")
 async def get_request_count(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]) -> List[Dict[str, Any]]:
@@ -76,7 +77,7 @@ async def get_request_count(collection: str, client_id: str, current_user: Annot
     return nb_requests
 
 
-@router.get("/clients", status_code=status.HTTP_200_OK, description="Get count of requests for a giving client")
+@router.get("/clients", status_code=status.HTTP_200_OK, description="Get a list of clients' names (user ids) ")
 async def get_clients(collection: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
     """This route gets a list of clients' names (user ids)
 
@@ -135,3 +136,42 @@ async def get_session_duration(collection: str,client_id: str, current_user: Ann
             session_durations.append({"session": i + 1, "duration (seconds)": duration.total_seconds()})
 
     return session_durations
+
+
+@router.get("/actions_count", status_code=status.HTTP_200_OK, description="Get count of an action for a giving client")
+async def get_actions_count(collection: str, client_id: str,action: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
+    """This route counts the occurence of an action for a specific client
+
+    Args:
+        collection (str): name of the collection containing the clients's logs
+        client_id (str): id of a giving client
+        action (str): name of the action to count
+
+    Returns:
+        A list of sessions with the number of requests in each session
+    """
+    collection_db = await collection_exists(current_user.username, collection)
+    sessions_cursor = collection_db.find({"client_id": client_id}, {"_id": 0, "sessions": 1})
+
+    sessions = await sessions_cursor.to_list(length=None)
+
+    if not sessions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No Request found for this client",
+        )
+
+    total_occurrences = 0
+    for session_data in sessions:
+        for session in session_data.get('sessions', []):
+            total_occurrences += sum(
+                1 for request in session.get('requests', []) if request.get('request_url') == action)
+
+    if total_occurrences == 0:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No matching requests found for this client",
+        )
+
+    return total_occurrences
+

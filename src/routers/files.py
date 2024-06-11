@@ -1,6 +1,8 @@
 # import aiofiles
 import json
 import os
+
+import pandas as pd
 from parser.main import parser, csv_parser
 from parser.models.csv_parameters import CsvParameters
 from parser.models.parameters import Parameters
@@ -25,7 +27,7 @@ router = APIRouter(prefix="/files", tags=["files"])
 async def post_log_file(
         files: list[UploadFile],
         collection: str,
-        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ):
     """Route to send logs files to the server and add it to the collection(once parsed)
 
@@ -110,11 +112,10 @@ async def post_csv_file(
         collection: str,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
         timestamp_column: str= "Time",timestamp_format: str= "%Y-%m-%d %H:%M:%S",
-        action_column: str= "Event name", session_id_column: str="User full name",separator: str = ","
+        action_column: str= "Event name", session_id_column: str="moodleUserId",separator: str = ","
 
 ):
     """Route to send logs files to the server and add it to the collection(once parsed)
-
 
     Args:
         current_user:
@@ -166,6 +167,22 @@ async def post_csv_file(
         if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(file.filename)
         else:
+            try:
+                # Read the CSV file
+                df = pd.read_csv(file_path, sep=separator)
+
+                # Validate the date format
+                pd.to_datetime(df[timestamp_column], format=timestamp_format)
+
+            except ValueError as e:
+                os.remove(file_path)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail=f"Date format or column name error in file {file.filename}.")
+            except Exception as e:
+                os.remove(file_path)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail=f"Error reading CSV file {file.filename}, wrong separator. {e}")
+
             # Parse the file
 
             list_client = await get_clients_from_collection(collection_db)

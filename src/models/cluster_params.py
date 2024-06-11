@@ -24,6 +24,7 @@ class LinkageCriteria(str, Enum):
     Single = "Single"
     Complete = "Complete"
     Average = "Average"
+    Ward = "Ward"
 
 
 class VectorRepresentation(str, Enum):
@@ -64,8 +65,8 @@ class FssClusteringParams(Base_model):
     min_samples: Optional[int] = None
     nbr_clusters: Optional[int] = None
     linkage: Optional[str] = None
-    min_support: Optional[int] = 80
-    min_length: Optional[int] = 0
+    min_support: Optional[int] = 99
+    min_length: Optional[int] = 9
     collection: Optional[str] = None
 
 

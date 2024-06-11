@@ -2,8 +2,25 @@ from fastapi import Depends, FastAPI
 
 from src.routers import client, collection, files, request, stats, tags, token, users, discover, clustering, session
 from src.security import oauth2_scheme
+from fastapi.middleware.cors import CORSMiddleware
+
 
 app = FastAPI()
+
+origins = [
+    "http://localhost",
+
+]
+
+# Add CORS middleware to the app
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allow specified origins
+    allow_credentials=True,
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
 
 oauth2_scheme = Depends(oauth2_scheme)
 
