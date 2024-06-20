@@ -426,19 +426,19 @@ async def dfg_perf(case_name: str = "client_id", concept_name: str = "action",
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@router.post("/animate_process/")
-async def process_animation(file: UploadFile = File(...)):
-
-    try:
-        # Save the uploaded file
-        file_path = os.path.join("src/temp/logs", file.filename)
-        with open(file_path, "wb") as f:
-            contents = await file.read()
-            f.write(contents)
-        res = await process_animate(file_path)
-        if res != 0:
-            raise HTTPException(status_code=500, detail="R script execution failed.")
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="File not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+# TODO : was working fine idk what changed, i have to review the code
+# @router.post("/animate_process/")
+# async def process_animation(file: UploadFile = File(...)):
+#     try:
+#         # Save the uploaded file
+#         file_path = os.path.join("src/test", file.filename)
+#         with open(file_path, "wb") as f:
+#             contents = await file.read()
+#             f.write(contents)
+#         res = await process_animate(file_path)
+#         if res != 0:
+#             raise HTTPException(status_code=500, detail="R script execution failed.")
+#     except FileNotFoundError:
+#         raise HTTPException(status_code=404, detail="File not found")
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))

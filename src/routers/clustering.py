@@ -10,7 +10,7 @@ from ..models.users import User_Model
 from ..security import get_current_active_user
 from clustering.main import (feature_based_clustering, fss_euclidean_distance, fss_meanshift,
                              trace_based_clustering, vector_based_clustering)
-from src.clustering_utils import empty_directory, post_clusters
+from src.clustering_utils import empty_directory, post_clusters, convert_to_csv
 
 router = APIRouter(
     prefix="/clustering",
@@ -278,7 +278,8 @@ async def get_clusters_func( collection: str,
                 reader = csv.reader(f, delimiter=";")
                 file_contents[file_path] = list(reader)
 
-        return {"message": "Documents have been saved as CSV files.", "file_contents": file_contents}
+
+        return {"message": "Documents have been saved as CSV files.", "file_paths": file_paths}
 
     except HTTPException as e:
         raise e

@@ -1,4 +1,6 @@
 import os
+import csv
+from io import StringIO
 import pandas as pd
 from datetime import datetime
 from typing import List, Annotated, Dict, Any
@@ -13,7 +15,6 @@ from .models.users import User_Model
 from .security import get_current_active_user
 from .users_utils import user_exists
 from .utils import compute_sha256
-
 
 
 async def post_clusters(
@@ -50,7 +51,7 @@ async def post_clusters(
         action_column="action",
         session_id_column="client_id",
         session_time_limit=3600,
-        cluster_id = "cluster_id"
+        cluster_id="cluster_id"
     )
 
     for file in files:
@@ -99,3 +100,9 @@ def empty_directory(directory_path):
         for file in files:
             os.remove(os.path.join(directory_path, file))
 
+
+def convert_to_csv(file_content, delimiter=','):
+    output = StringIO()
+    writer = csv.writer(output, delimiter=delimiter)
+    writer.writerows(file_content)
+    return output.getvalue()
