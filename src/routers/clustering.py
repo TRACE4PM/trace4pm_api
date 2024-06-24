@@ -43,7 +43,8 @@ async def trace_based(
         decode = io.StringIO(file_content.decode('utf-8'))
         params.linkage = linkage.lower()
         # Perform trace-based clustering
-        result = trace_based_clustering(decode, algorithm, params)
+        result, nb = trace_based_clustering(decode, algorithm, params)
+        result["Number of traces"] = nb["Number of traces"]
         # save the resulting log files in the user's collection
         files_paths = []
         log_directory = "temp/logs"
@@ -93,7 +94,6 @@ async def vector_representation(
         #perform feature based clustering based on the vector representation and algorithm chosen by the user
         result, nb = vector_based_clustering(decode, vector_representation.lower(), clustering_method, params)
         result["Number of traces"] = nb["Number of traces"]
-        result["Number unique traces"] = nb["Number unique traces"]
         # save the resulting log files in the user's collection
         files_paths = []
         log_directory = "temp/logs"
@@ -154,6 +154,7 @@ async def fss_encoding(
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# NOTE: Will probably remove this approach later
 
 # @router.post("/feature_based/fss_meanshift")
 # async def fss_meanshift_algo(

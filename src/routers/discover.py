@@ -1,6 +1,6 @@
 import os
-
-import pm4py
+import tempfile
+from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query, Request, Depends
 from fastapi.responses import JSONResponse, Response, FileResponse
 from discover.main import (alpha_miner_algo, alpha_algo_quality, alpha_miner_plus, alpha_miner_plus_quality,
@@ -8,10 +8,14 @@ from discover.main import (alpha_miner_algo, alpha_algo_quality, alpha_miner_plu
                            inductive_miner, inductive_miner_quality, inductive_miner_tree,
                            dfg_precision, dfg_petri_quality,
                            dfg_performance, bpmn_model, process_animate)
-from ..models.discover import Quality_Type
+from ..database.config import database
+from ..collection_utils import collection_exists
 from ..discover_utils import read_files
-import tempfile
-import io
+from ..models.discover import Quality_Type
+from ..models.users import User_Model
+from ..security import get_current_active_user
+from ..stats_utils import get_clients_action
+
 
 router = APIRouter(
     prefix="/discovery",
@@ -20,9 +24,13 @@ router = APIRouter(
 
 
 @router.post("/alpha-miner/")
-async def alpha_miner_algorithm(case_name: str = "client_id",
-                                  concept_name: str = "action",
-                                  timestamp: str = 'timestamp', separator: str = ";",file: UploadFile = File(...)):
+async def alpha_miner_algorithm(
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        collection: str,
+        case_name: str = "client_id",
+        concept_name: str = "action",
+        timestamp: str = 'timestamp', separator: str = ";",
+      ):
     """
           Applying Alpha Miner algorithm on a log file and saving the model in a png file
         Args:
@@ -32,17 +40,25 @@ async def alpha_miner_algorithm(case_name: str = "client_id",
             petri net, initial marking and final marking
            """
     try:
-        file_content = await file.read()
-        file_extension = os.path.splitext(file.filename)[1]
 
-        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
-            temp_file.write(file_content)
-            temp_file_path = temp_file.name
+        collection_db = await collection_exists(current_user.username, collection)
 
-        log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(temp_file_path, case_name,
-                                                                                       concept_name, timestamp,
-                                                                                       separator, )
-        return FileResponse(output_path)
+        json_obj = []
+        async for doc in collection_db.find({}, {"_id": 0}):
+            json_obj.append(doc)  # Directly append the document
+
+        print(json_obj)
+        # file_content = await file.read()
+        # file_extension = os.path.splitext(file.filename)[1]
+        #
+        # with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+        #     temp_file.write(file_content)
+        #     temp_file_path = temp_file.name
+        #
+        # log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(temp_file_path, case_name,separator, )
+
+        # return collection_db['files_hash']
+
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -381,6 +397,9 @@ async def dfg_to_petrinet_quality(fitness_approach: Quality_Type,
                                   timestamp: str = 'timestamp', separator: str = ";",
                                   file: UploadFile = File(...)):
     """
+     Converts the dfg to a petri net to calculate the quality of the resulting model
+    Returns:
+        zip file: containing a json file of the quality of the model, a png of the petri net and a PNML file
      Returns : the precision of the Directly Follow Graph
                """
     try:
@@ -404,6 +423,7 @@ async def dfg_to_petrinet_quality(fitness_approach: Quality_Type,
 async def dfg_perf(case_name: str = "client_id", concept_name: str = "action",
                    timestamp: str = 'timestamp', separator: str = ";", file: UploadFile = File(...)):
     """
+     Discovers a performance directly-follows graph from an event log and saves it in a png file
    Args:
     separator,timestamp, concept_name,case_name: columns of the csv file,
     file: csv or xes log file
@@ -426,19 +446,17 @@ async def dfg_perf(case_name: str = "client_id", concept_name: str = "action",
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# TODO : was working fine idk what changed, i have to review the code
-# @router.post("/animate_process/")
-# async def process_animation(file: UploadFile = File(...)):
-#     try:
-#         # Save the uploaded file
-#         file_path = os.path.join("src/test", file.filename)
-#         with open(file_path, "wb") as f:
-#             contents = await file.read()
-#             f.write(contents)
-#         res = await process_animate(file_path)
-#         if res != 0:
-#             raise HTTPException(status_code=500, detail="R script execution failed.")
-#     except FileNotFoundError:
-#         raise HTTPException(status_code=404, detail="File not found")
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=str(e))
+# FIXME : xdg-open can't open the html file from the docker container
+@router.post("/animate_process/")
+async def process_animation(file: UploadFile = File(...)):
+    try:
+        # Save the uploaded file
+        file_path = os.path.join("src/logs", file.filename)
+        with open(file_path, "wb") as f:
+            contents = await file.read()
+            f.write(contents)
+        res = await process_animate(file_path)
+        if res != 0:
+            raise HTTPException(status_code=500, detail="R script execution failed.")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

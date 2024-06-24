@@ -18,25 +18,26 @@ RUN pip install poetry
 # RUN poetry config virtualenvs.create false \
 #     && poetry install --no-dev --no-interaction --no-ansi --no-root
 # DEV
-# RUN apt-get update && apt-get install -y r-base
+RUN apt-get update && apt-get install -y r-base
 RUN apt-get update && apt-get install -y graphviz
 
-# RUN apt-get update && \
-#     apt-get install -y \
-#         libcurl4-openssl-dev \
-#         libssl-dev \
-#         && \
-#     apt-get clean && \
-#     rm -rf /var/lib/apt/lists/*
+RUN apt-get update && \
+    apt-get install -y \
+        libcurl4-openssl-dev \
+        libssl-dev \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 #
-# RUN apt-get update && apt-get install -y libxml2-dev
-# RUN apt-get update && apt-get install -y libglpk-dev
+RUN apt-get update && apt-get install -y libxml2-dev
+RUN apt-get update && apt-get install -y libglpk-dev
 
 # installing the necessary package for the process animation
 # takes more than 30min to install all the dependencies
-# RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=FALSE)"
-# RUN poetry install --no-interaction --no-ansi --no-root -vvv
-RUN poetry install --no-interaction --no-ansi --no-root
+#
+RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=FALSE)"
+RUN poetry install --no-interaction --no-ansi --no-root -vvv
+# RUN poetry install --no-interaction --no-ansi --no-root
 
 
 
