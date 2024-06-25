@@ -1,6 +1,8 @@
 import os
 import csv
-from io import StringIO
+import io
+import tempfile
+import zipfile
 import pandas as pd
 from datetime import datetime
 from typing import List, Annotated, Dict, Any
@@ -106,3 +108,83 @@ def convert_to_csv(file_content, delimiter=','):
     writer = csv.writer(output, delimiter=delimiter)
     writer.writerows(file_content)
     return output.getvalue()
+
+
+async def fetch_documents(collection_db: Any) -> List[Dict]:
+    """Fetch documents from the collection."""
+    documents = []
+    async for doc in collection_db.find({}, {"_id": 0}):
+        documents.append(doc)
+    if not documents:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
+        )
+    return documents
+
+
+async def fetch_documents(collection_db: Any) -> List[Dict]:
+    """Fetch documents from the collection."""
+    documents = []
+    async for doc in collection_db.find({}, {"_id": 0}):
+        documents.append(doc)
+    if not documents:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
+        )
+    return documents
+
+def create_csv_files(documents: List[Dict], directory: str) -> List[str]:
+    """Create CSV files from the json files in the collection"""
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        print(f"Directory {directory} created.")
+    else:
+        empty_directory(directory)
+
+    writers = {}
+    file_paths = []
+
+    for doc in documents:
+        client_id = doc.get("client_id", "unknown")
+        sessions = doc.get("sessions", [])
+        for session in sessions:
+            requests = session.get("requests", [])
+            for request in requests:
+                cluster_id = request.get("cluster_id")
+                if cluster_id is None:
+                    continue
+
+                file_path = os.path.join(directory, f"cluster_{cluster_id}.csv")
+                file_exists = os.path.isfile(file_path)
+
+                if cluster_id not in writers:
+                    file = open(file_path, "a", newline='')
+                    writer = csv.writer(file, delimiter=";")
+                    writers[cluster_id] = (writer, file)
+
+                    if not file_exists:
+                        writer.writerow(["client_id", "action", "timestamp"])
+
+                writer, _ = writers[cluster_id]
+                writer.writerow([
+                    client_id,
+                    request.get("request_url"),
+                    request.get("request_time")
+                ])
+
+    for writer, file in writers.values():
+        file.close()
+        file_paths.append(file.name)
+        print(f"File closed: {file.name}")
+
+    return file_paths
+
+def create_zip_file(file_paths: List[str]) -> str :
+    """Create a zip file containing the CSV files."""
+    temp_dir = tempfile.mkdtemp()
+    zip_file_path = os.path.join(temp_dir, "clusters.zip")
+
+    with zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for file_path in file_paths:
+            zip_file.write(file_path, os.path.basename(file_path))
+    return zip_file_path

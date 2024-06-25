@@ -1,7 +1,10 @@
 import csv
 import io
 import os
+import tempfile
+import zipfile
 from fastapi import APIRouter, Body, Depends, File, HTTPException, Query, Request, status, UploadFile
+from fastapi.responses import FileResponse
 from typing import Annotated
 from ..collection_utils import collection_exists
 from ..models.cluster_params import ClusteringMethod, ClusteringParams, DistanceMeasure, LinkageCriteria, VectorRepresentation
@@ -10,7 +13,7 @@ from ..models.users import User_Model
 from ..security import get_current_active_user
 from clustering.main import (feature_based_clustering, fss_euclidean_distance, fss_meanshift,
                              trace_based_clustering, vector_based_clustering)
-from src.clustering_utils import empty_directory, post_clusters, convert_to_csv
+from src.clustering_utils import empty_directory, post_clusters, fetch_documents, create_csv_files,create_zip_file
 
 router = APIRouter(
     prefix="/clustering",
@@ -216,71 +219,38 @@ async def get_clusters_func( collection: str,
     try:
         # Check if the collection exists
         collection_db = await collection_exists(current_user.username, collection)
-        json_obj = []
-        async for doc in collection_db.find({}, {"_id": 0}):
-            json_obj.append(doc)  # Directly append the document
-        # If json is empty, return an error
-        if not json_obj:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
-            )
+        documents = await fetch_documents(collection_db)
 
         # Create a directory to store the CSV files
         directory = "src/temp/clusters"
-        if not os.path.exists(directory):
-            os.makedirs(directory)
-            print(f"Directory {directory} created.")
-        else:
-            empty_directory("src/temp/clusters")
-
-        # Dictionary to keep track of file writers for each cluster_id
-        writers = {}
-        file_paths = []
-        # Process each document and store session data in separate CSV files
-        for doc in json_obj:
-            client_id = doc.get("client_id", "unknown")
-            sessions = doc.get("sessions", [])
-            for session in sessions:
-                requests = session.get("requests", [])
-                for request in requests:
-                    cluster_id = request.get("cluster_id")
-                    if cluster_id is None:
-                        continue
-
-                    file_path = os.path.join(directory, f"cluster_{cluster_id}.csv")
-                    file_exists = os.path.isfile(file_path)
-
-                    # Initialize the writer if it doesn't exist
-                    if cluster_id not in writers:
-                        file = open(file_path, "a", newline='')
-                        writer = csv.writer(file, delimiter =";")
-                        writers[cluster_id] = (writer, file)
-
-                        if not file_exists:
-                            # Write the header if the file is being created
-                            writer.writerow(["client_id", "action", "timestamp"])
-
-                    writer, _ = writers[cluster_id]
-                    writer.writerow([
-                        client_id,
-                        request.get("request_url"),
-                        request.get("request_time")
-                    ])
-
-        # Close all files
-        for writer, file in writers.values():
-            file.close()
-            file_paths.append(file.name)
-            print(f"File closed: {file.name}")
-
-        file_contents = {}
-        for file_path in file_paths:
-            with open(file_path, "r") as f:
-                reader = csv.reader(f, delimiter=";")
-                file_contents[file_path] = list(reader)
-
+        file_paths = create_csv_files(documents, directory)
 
         return {"message": "Documents have been saved as CSV files.", "file_paths": file_paths}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get("/get_cluster_file")
+async def get_files( collection: str,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+):
+
+    try:
+        # Check if the collection exists
+        collection_db = await collection_exists(current_user.username, collection)
+        documents = await fetch_documents(collection_db)
+
+        # Create a directory to store the CSV files
+        directory = "src/temp/clusters"
+        file_paths = create_csv_files(documents, directory)
+        # Create a zip file
+        zip_file_path = create_zip_file(file_paths)
+        print(zip_file_path)
+        return FileResponse(zip_file_path, media_type="application/zip", filename="clusters.zip")
 
     except HTTPException as e:
         raise e
