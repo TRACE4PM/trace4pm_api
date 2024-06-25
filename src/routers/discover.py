@@ -221,6 +221,9 @@ async def heuristic_miner_to_petrinet(fitness_approach: Quality_Type,
                                       precision_approach: Quality_Type, case_name: str = "client_id",
                                       concept_name: str = "action",
                                       timestamp: str = 'timestamp', separator: str = ";",
+                                      dependency_threshold: float = Query(0.5, ge=0, le=1),
+                                      and_threshold: float = Query(0.65, ge=0, le=1),
+                                      loop_two_threshold: float = Query(0.5, ge=0, le=1),
                                       file: UploadFile = File(...)):
     """
      Generate a petri net from a heuristic net to calculate the quality of the model
@@ -236,7 +239,9 @@ async def heuristic_miner_to_petrinet(fitness_approach: Quality_Type,
             temp_file_path = temp_file.name
 
         results, zip = await heuristic_miner_petri(temp_file_path, case_name, concept_name, timestamp, separator,
-                                                   fitness_approach.lower(), precision_approach.lower())
+                                dependency_threshold, and_threshold, loop_two_threshold,
+                                fitness_approach,
+                                precision_approach)
         return results, zip
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
@@ -451,7 +456,7 @@ async def dfg_perf(case_name: str = "client_id", concept_name: str = "action",
 async def process_animation(file: UploadFile = File(...)):
     try:
         # Save the uploaded file
-        file_path = os.path.join("src/logs", file.filename)
+        file_path = os.path.join("src/temp", file.filename)
         with open(file_path, "wb") as f:
             contents = await file.read()
             f.write(contents)

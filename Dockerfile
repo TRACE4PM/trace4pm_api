@@ -35,9 +35,9 @@ RUN apt-get update && apt-get install -y libglpk-dev
 # installing the necessary package for the process animation
 # takes more than 30min to install all the dependencies
 #
-RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=FALSE)"
-RUN poetry install --no-interaction --no-ansi --no-root -vvv
-# RUN poetry install --no-interaction --no-ansi --no-root
+RUN R -e "install.packages(c('curl', 'bupaR', 'dplyr', 'xesreadR', 'processanimateR'), dependencies=TRUE)"
+# RUN poetry install --no-interaction --no-ansi --no-root -vvv
+RUN poetry install --no-interaction --no-ansi --no-root
 
 
 
