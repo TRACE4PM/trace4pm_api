@@ -16,6 +16,21 @@ from ..models.users import User_Model
 from ..security import get_current_active_user
 from ..stats_utils import get_clients_action
 
+import time
+import logging
+import sys
+
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(sys.stdout)
+    ]
+)
+
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter(
     prefix="/discovery",
@@ -221,28 +236,27 @@ async def heuristic_miner_to_petrinet(fitness_approach: Quality_Type,
                                       precision_approach: Quality_Type, case_name: str = "client_id",
                                       concept_name: str = "action",
                                       timestamp: str = 'timestamp', separator: str = ";",
-                                      dependency_threshold: float = Query(0.5, ge=0, le=1),
-                                      and_threshold: float = Query(0.65, ge=0, le=1),
-                                      loop_two_threshold: float = Query(0.5, ge=0, le=1),
                                       file: UploadFile = File(...)):
     """
      Generate a petri net from a heuristic net to calculate the quality of the model
         Returns:
             A zip file containing the petri net, pnml file and the quality of the model
     """
+    start_time = time.time()
     try:
         file_content = await file.read()
-        file_extension = os.path.splitext(file.filename)[1]
+        logger.info(f"File read in {time.time() - start_time:.2f} seconds")
 
+        file_extension = os.path.splitext(file.filename)[1]
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
             temp_file.write(file_content)
             temp_file_path = temp_file.name
+        logger.info(f"Temp file written in {time.time() - start_time:.2f} seconds")
 
-        results, zip = await heuristic_miner_petri(temp_file_path, case_name, concept_name, timestamp, separator,
-                                dependency_threshold, and_threshold, loop_two_threshold,
-                                fitness_approach,
-                                precision_approach)
-        return results, zip
+        results, zip_path = await heuristic_miner_petri(temp_file_path, case_name, concept_name, timestamp, separator,
+                                                         fitness_approach.lower(), precision_approach.lower())
+        logger.info(f"heuristic_miner_petri executed in {time.time() - start_time:.2f} seconds")
+        return results, zip_path
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -304,6 +318,9 @@ async def inductive_miner_qual(fitness_approach: Quality_Type,
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
             temp_file.write(file_content)
             temp_file_path = temp_file.name
+
+        print(fitness_approach.lower(), precision_approach.lower())
+
         results, zip = await inductive_miner_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                      noise_threshold, fitness_approach.lower(),
                                                      precision_approach.lower())
@@ -414,6 +431,8 @@ async def dfg_to_petrinet_quality(fitness_approach: Quality_Type,
         with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
             temp_file.write(file_content)
             temp_file_path = temp_file.name
+
+        print(fitness_approach.lower(), precision_approach.lower())
 
         results, zip = await dfg_petri_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                fitness_approach.lower(), precision_approach.lower())

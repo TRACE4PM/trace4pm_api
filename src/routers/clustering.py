@@ -15,6 +15,8 @@ from clustering.main import (feature_based_clustering, fss_euclidean_distance, f
                              trace_based_clustering, vector_based_clustering)
 from src.clustering_utils import empty_directory, post_clusters, fetch_documents, create_csv_files,create_zip_file
 
+
+
 router = APIRouter(
     prefix="/clustering",
     tags=["clustering"]
