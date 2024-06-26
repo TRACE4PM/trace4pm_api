@@ -10,7 +10,7 @@ from discover.main import (alpha_miner_algo, alpha_algo_quality, alpha_miner_plu
                            dfg_performance, bpmn_model, process_animate)
 from ..database.config import database
 from ..collection_utils import collection_exists
-from ..discover_utils import read_files
+from ..discover_utils import read_files, create_zip_file
 from ..models.discover import Quality_Type
 from ..models.users import User_Model
 from ..security import get_current_active_user
@@ -478,7 +478,14 @@ async def process_animation(file: UploadFile = File(...)):
         with open(file_path, "wb") as f:
             contents = await file.read()
             f.write(contents)
-        html_content = await process_animate(file_path)
-        return HTMLResponse(content=html_content)
+
+        html_file_path = await process_animate(file_path)
+        print("file path ", html_file_path)
+        list_files = []
+        list_files.append(html_file_path)
+        list_files.append("src/temp/process_animation_files")
+        zip_file_path = create_zip_file(list_files)
+
+        return FileResponse(zip_file_path, media_type="application/zip", filename="animation.zip")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

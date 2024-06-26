@@ -1,6 +1,9 @@
 import os
 import io
 import glob
+import zipfile
+from typing import List
+
 import pandas as pd
 import tempfile
 import pm4py
@@ -37,3 +40,20 @@ def latest_image():
     latest_image = max(list_of_files, key=os.path.getctime)
 
     return latest_image
+
+def create_zip_file(file_paths: List[str]) -> str:
+    """Create a zip file containing the provided files and directories."""
+    temp_dir = tempfile.mkdtemp()
+    zip_file_path = os.path.join(temp_dir, "clusters.zip")
+
+    with zipfile.ZipFile(zip_file_path, "w", zipfile.ZIP_DEFLATED) as zip_file:
+        for file_path in file_paths:
+            if os.path.isdir(file_path):
+                for root, _, files in os.walk(file_path):
+                    for file in files:
+                        full_path = os.path.join(root, file)
+                        arcname = os.path.join("process_animation_files", os.path.relpath(full_path, start=file_path))
+                        zip_file.write(full_path, arcname)
+            else:
+                zip_file.write(file_path, os.path.basename(file_path))
+    return zip_file_path
