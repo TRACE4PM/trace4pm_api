@@ -133,6 +133,52 @@ async def fetch_documents(collection_db: Any) -> List[Dict]:
         )
     return documents
 
+def create_csv_files(documents: List[Dict], directory: str) -> List[str]:
+    """Create CSV files from the json files in the collection"""
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+        print(f"Directory {directory} created.")
+    else:
+        empty_directory(directory)
+
+    writers = {}
+    file_paths = []
+
+    for doc in documents:
+        client_id = doc.get("client_id", "unknown")
+        sessions = doc.get("sessions", [])
+        for session in sessions:
+            requests = session.get("requests", [])
+            for request in requests:
+                cluster_id = request.get("cluster_id")
+                if cluster_id is None:
+                    continue
+
+                file_path = os.path.join(directory, f"cluster_{cluster_id}.csv")
+                file_exists = os.path.isfile(file_path)
+
+                if cluster_id not in writers:
+                    file = open(file_path, "a", newline='')
+                    writer = csv.writer(file, delimiter=";")
+                    writers[cluster_id] = (writer, file)
+
+                    if not file_exists:
+                        writer.writerow(["client_id", "action", "timestamp"])
+
+                writer, _ = writers[cluster_id]
+                writer.writerow([
+                    client_id,
+                    request.get("request_url"),
+                    request.get("request_time")
+                ])
+
+    for writer, file in writers.values():
+        file.close()
+        file_paths.append(file.name)
+        print(f"File closed: {file.name}")
+
+    return file_paths
+
 
 def create_csv_file(documents: List[Dict], cluster_id: int) -> str:
     """Create CSV data from the JSON files in the collection"""
