@@ -2,7 +2,7 @@ import os
 import tempfile
 from typing import Annotated
 from fastapi import FastAPI, UploadFile, File, APIRouter, HTTPException, Query, Request, Depends
-from fastapi.responses import JSONResponse, Response, FileResponse
+from fastapi.responses import JSONResponse, Response, FileResponse, HTMLResponse
 from discover.main import (alpha_miner_algo, alpha_algo_quality, alpha_miner_plus, alpha_miner_plus_quality,
                            freq_alpha_miner, heuristic_miner, heuristic_miner_petri,
                            inductive_miner, inductive_miner_quality, inductive_miner_tree,
@@ -470,7 +470,6 @@ async def dfg_perf(case_name: str = "client_id", concept_name: str = "action",
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# FIXME : xdg-open can't open the html file from the docker container
 @router.post("/animate_process/")
 async def process_animation(file: UploadFile = File(...)):
     try:
@@ -479,8 +478,9 @@ async def process_animation(file: UploadFile = File(...)):
         with open(file_path, "wb") as f:
             contents = await file.read()
             f.write(contents)
-        res = await process_animate(file_path)
-        if res != 0:
+        html_content = await process_animate(file_path)
+        if html_content != 0:
             raise HTTPException(status_code=500, detail="R script execution failed.")
+        return HTMLResponse(content=html_content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

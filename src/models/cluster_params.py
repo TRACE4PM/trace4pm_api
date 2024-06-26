@@ -70,3 +70,6 @@ class FssClusteringParams(Base_model):
     collection: Optional[str] = None
 
 
+class ClientSessionDurationResponse(Base_model):
+    client_id: str
+    total_duration_seconds: float

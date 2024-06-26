@@ -133,16 +133,11 @@ async def fetch_documents(collection_db: Any) -> List[Dict]:
         )
     return documents
 
-def create_csv_files(documents: List[Dict], directory: str) -> List[str]:
-    """Create CSV files from the json files in the collection"""
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-        print(f"Directory {directory} created.")
-    else:
-        empty_directory(directory)
 
+def create_csv_file(documents: List[Dict], cluster_id: int) -> str:
+    """Create CSV data from the JSON files in the collection"""
+    output = io.StringIO()
     writers = {}
-    file_paths = []
 
     for doc in documents:
         client_id = doc.get("client_id", "unknown")
@@ -150,34 +145,23 @@ def create_csv_files(documents: List[Dict], directory: str) -> List[str]:
         for session in sessions:
             requests = session.get("requests", [])
             for request in requests:
-                cluster_id = request.get("cluster_id")
-                if cluster_id is None:
+                cluster = request.get("cluster_id")
+                if cluster != cluster_id:
                     continue
 
-                file_path = os.path.join(directory, f"cluster_{cluster_id}.csv")
-                file_exists = os.path.isfile(file_path)
+                if cluster not in writers:
+                    writer = csv.writer(output, delimiter=";")
+                    writers[cluster] = writer
+                    writer.writerow(["client_id", "action", "timestamp"])
 
-                if cluster_id not in writers:
-                    file = open(file_path, "a", newline='')
-                    writer = csv.writer(file, delimiter=";")
-                    writers[cluster_id] = (writer, file)
-
-                    if not file_exists:
-                        writer.writerow(["client_id", "action", "timestamp"])
-
-                writer, _ = writers[cluster_id]
+                writer = writers[cluster]
                 writer.writerow([
                     client_id,
                     request.get("request_url"),
                     request.get("request_time")
                 ])
 
-    for writer, file in writers.values():
-        file.close()
-        file_paths.append(file.name)
-        print(f"File closed: {file.name}")
-
-    return file_paths
+    return output.getvalue()
 
 def create_zip_file(file_paths: List[str]) -> str :
     """Create a zip file containing the CSV files."""

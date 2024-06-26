@@ -3,7 +3,7 @@ import io
 import os
 import tempfile
 import zipfile
-from fastapi import APIRouter, Body, Depends, File, HTTPException, Query, Request, status, UploadFile
+from fastapi import APIRouter, Body, Depends, File, HTTPException, Query, Request, status, UploadFile, Response
 from fastapi.responses import FileResponse
 from typing import Annotated
 from ..collection_utils import collection_exists
@@ -13,7 +13,7 @@ from ..models.users import User_Model
 from ..security import get_current_active_user
 from clustering.main import (feature_based_clustering, fss_euclidean_distance, fss_meanshift,
                              trace_based_clustering, vector_based_clustering)
-from src.clustering_utils import empty_directory, post_clusters, fetch_documents, create_csv_files,create_zip_file
+from src.clustering_utils import empty_directory, post_clusters, fetch_documents, create_csv_files,create_zip_file, create_csv_file
 
 
 
@@ -237,7 +237,7 @@ async def get_clusters_func( collection: str,
 
 
 @router.get("/get_cluster_file")
-async def get_files( collection: str,
+async def get_file( collection: str, cluster_id : int,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
 ):
 
@@ -247,13 +247,11 @@ async def get_files( collection: str,
         documents = await fetch_documents(collection_db)
 
         # Create a directory to store the CSV files
-        directory = "src/temp/clusters"
-        file_paths = create_csv_files(documents, directory)
-        # Create a zip file
-        zip_file_path = create_zip_file(file_paths)
-        print(zip_file_path)
-        return FileResponse(zip_file_path, media_type="application/zip", filename="clusters.zip")
+        csv_data = create_csv_file(documents, cluster_id)
 
+        response = Response(content=csv_data, media_type="text/csv")
+        response.headers["Content-Disposition"] = f"attachment; filename=cluster_{cluster_id}.csv"
+        return response
     except HTTPException as e:
         raise e
     except Exception as e:

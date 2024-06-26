@@ -1,10 +1,11 @@
 from collections import defaultdict
 from datetime import datetime
 from fastapi import APIRouter, Body, Depends, File, HTTPException, Query, Request, status, UploadFile
-from typing import Annotated, List, Dict, Any
+from typing import Annotated, List, Dict, Any, Counter
 from ..collection_utils import collection_exists
 from ..models.users import User_Model
 from ..security import get_current_active_user
+from ..models.cluster_params import ClientSessionDurationResponse
 
 
 router = APIRouter(
@@ -13,33 +14,69 @@ router = APIRouter(
 )
 
 
-
-@router.get("/sessions_count", status_code=status.HTTP_200_OK, description="Get the number of sessions for a giving client")
-async def get_number_sessions(collection: str, client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
-    """This route gets the total number of sessions for a specific client
+@router.get(
+    "/trace_variants",
+    status_code=status.HTTP_200_OK,
+    description="Get the number of unique variants from the traces"
+)
+async def get_trace_variants(
+        collection: str,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> Dict[str, Any]:
+    """This route calculates the number of unique variants from the traces.
 
     Args:
-        collection (str): name of the collection containing the clients's logs
-        client_id (str): id of a giving client
+        collection (str): Name of the collection containing the clients' logs.
+        current_user (User_Model): The currently authenticated user.
 
     Returns:
-       The number of sessions of the specified client
+        Dict[str, Any]: A dictionary with the count of unique variants.
     """
-    collection_db = await collection_exists(current_user.username, collection)
-    client_document = await collection_db.find_one(
-        {"client_id": client_id},
-        {"_id": 0, "sessions": 1}
-    )
-
-    if not client_document:
+    try:
+        collection_db = await collection_exists(current_user.username, collection)
+    except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Client not found"
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error accessing collection: {str(e)}"
         )
 
-    total_sessions = len(client_document.get("sessions", []))
+    try:
+        sessions = [
+            request
+            async for request in collection_db.find(
+                {},
+                {"_id": 0, "sessions.requests": 1}
+            )
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving sessions: {str(e)}"
+        )
 
-    return {"User id": client_id, "total_sessions": total_sessions}
+    if not sessions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No sessions found"
+        )
+
+    trace_variants = set()
+
+    for session in sessions:
+        for sess in session['sessions']:
+            try:
+                actions = tuple(req['request_url'] for req in sess['requests'])
+                trace_variants.add(actions)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error processing session: {str(e)}"
+                )
+
+    return {
+        "unique_variants": trace_variants,
+        "unique_variant_count": len(trace_variants)
+    }
 
 
 @router.get("/requests_count", status_code=status.HTTP_200_OK, description="Get count of requests for a giving client")
@@ -104,39 +141,79 @@ async def get_clients(collection: str, current_user: Annotated[User_Model, Depen
 
     return client_ids
 
-@router.get("/session_duration", status_code=status.HTTP_200_OK, description="Get count of requests for a giving client")
-async def get_session_duration(collection: str,client_id: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
-    """This route counts the time duration of each session for a specific client
+
+@router.get(
+    "/session_duration",
+    status_code=status.HTTP_200_OK,
+
+    description="Get the duration of sessions for a specific client"
+)
+async def get_session_duration(
+    collection: str,
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) :
+    """This route calculates the time duration of each session for a specific client.
 
     Args:
-        collection (str): name of the collection containing the clients's logs
+        collection (str): Name of the collection containing the clients' logs.
+        client_id (str): ID of the client whose sessions are to be queried.
+        current_user (User_Model): The currently authenticated user.
+
     Returns:
-        A list of sessions with their time duration
+        List[SessionDurationResponse]: A list of sessions with their time durations.
     """
-    collection_db = await collection_exists(current_user.username, collection)
-    sessions = [
-        request
-        async for request in collection_db.find(
-            {"client_id": client_id},
-            {"_id": 0, "client_id": 1, "country": 1, "sessions.requests": 1},
+    try:
+        collection_db  = await collection_exists(current_user.username, collection)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error accessing collection: {str(e)}"
         )
-    ]
+
+    try:
+        sessions = [
+            request
+            async for request in collection_db.find(
+                {},
+                {"_id": 0, "client_id": 1, "sessions.requests": 1}
+            )
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving sessions: {str(e)}"
+        )
 
     if not sessions:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="No sessions found for this client",
+            detail="No sessions found"
         )
 
-    session_durations = []
+    client_durations = {}
     for session in sessions:
-        for i, sess in enumerate(session['sessions']):
-            request_times = [datetime.fromisoformat(req['request_time']) for req in sess['requests']]
-            duration = max(request_times) - min(request_times)
-            session_durations.append({"session": i + 1, "duration (seconds)": duration.total_seconds()})
+        client_id = session['client_id']
+        if client_id not in client_durations:
+            client_durations[client_id] = []
 
-    return session_durations
+        for sess in session['sessions']:
+            try:
+                request_times = [datetime.fromisoformat(req['request_time']) for req in sess['requests']]
+                client_durations[client_id].extend(request_times)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error processing session for client {client_id}: {str(e)}"
+                )
 
+    client_total_durations = []
+    for client_id, times in client_durations.items():
+        if times:
+            total_duration = max(times) - min(times)
+            client_total_durations.append(
+                ClientSessionDurationResponse(client_id=client_id, total_duration_seconds=total_duration.total_seconds()))
+
+    return client_total_durations
 
 @router.get("/actions_count", status_code=status.HTTP_200_OK, description="Get count of an action for a giving client")
 async def get_actions_count(collection: str, client_id: str,action: str, current_user: Annotated[User_Model, Depends(get_current_active_user)]):
@@ -175,3 +252,142 @@ async def get_actions_count(collection: str, client_id: str,action: str, current
 
     return total_occurrences
 
+
+@router.get(
+    "/action_frequencies",
+    status_code=status.HTTP_200_OK,
+    description="Get the frequency of each action for all clients"
+)
+async def get_action_frequencies(
+    collection: str,
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> List[Dict[str, Any]]:
+    """This route calculates the frequency of each action for all clients.
+
+    Args:
+        collection (str): Name of the collection containing the clients' logs.
+        current_user (User_Model): The currently authenticated user.
+
+    Returns:
+        List[Dict[str, Any]]: A list of dictionaries with client IDs and their action frequencies.
+    """
+    try:
+        collection_db= await collection_exists(current_user.username, collection)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error accessing collection: {str(e)}"
+        )
+
+    try:
+        sessions = [
+            request
+            async for request in collection_db.find(
+                {},
+                {"_id": 0, "client_id": 1, "sessions.requests": 1}
+            )
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving sessions: {str(e)}"
+        )
+
+    if not sessions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No sessions found"
+        )
+
+    client_actions = {}
+    for session in sessions:
+        client_id = session['client_id']
+        if client_id not in client_actions:
+            client_actions[client_id] = Counter()
+
+        for sess in session['sessions']:
+            try:
+                actions = [req['request_url'] for req in sess['requests']]
+                client_actions[client_id].update(actions)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error processing session for client {client_id}: {str(e)}"
+                )
+
+    client_action_frequencies = []
+    for client_id, action_counter in client_actions.items():
+        client_action_frequencies.append({
+            "client_id": client_id,
+            "action_frequencies": dict(action_counter)
+        })
+
+    return client_action_frequencies
+
+@router.get(
+    "/actions_counter",
+    status_code=status.HTTP_200_OK,
+    description="Get the frequency of each action for all clients"
+)
+async def get_actions_freq_traces(
+        collection: str,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> Dict[str, Any]:
+    """This route calculates the frequency of each action overall traces.
+
+    Args:
+        collection (str): Name of the collection containing the clients' logs.
+        current_user (User_Model): The currently authenticated user.
+
+    Returns:
+        Dict[str, Any]: A dictionary with client IDs and their action frequencies, and overall action frequencies.
+    """
+    try:
+        collection_db= await collection_exists(current_user.username, collection)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error accessing collection: {str(e)}"
+        )
+
+    try:
+        sessions = [
+            request
+            async for request in collection_db.find(
+                {},
+                {"_id": 0, "client_id": 1, "sessions.requests": 1}
+            )
+        ]
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Error retrieving sessions: {str(e)}"
+        )
+
+    if not sessions:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No sessions found"
+        )
+
+    client_actions = {}
+    overall_actions = Counter()
+
+    for session in sessions:
+        client_id = session['client_id']
+        if client_id not in client_actions:
+            client_actions[client_id] = Counter()
+
+        for sess in session['sessions']:
+            try:
+                actions = [req['request_url'] for req in sess['requests']]
+                client_actions[client_id].update(actions)
+                overall_actions.update(actions)
+            except Exception as e:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"Error processing session for client {client_id}: {str(e)}"
+                )
+
+
+    return dict(overall_actions)
