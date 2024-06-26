@@ -479,9 +479,6 @@ async def process_animation(file: UploadFile = File(...)):
             contents = await file.read()
             f.write(contents)
         html_content = await process_animate(file_path)
-        print(html_content)
-        if html_content != 0:
-            raise HTTPException(status_code=500, detail="R script execution failed.")
-        return html_content
+        return HTMLResponse(content=html_content)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
