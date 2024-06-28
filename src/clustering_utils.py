@@ -20,13 +20,15 @@ from .utils import compute_sha256
 
 
 async def post_clusters(
-        files,
-        collection,
+        files, file_name,
+        clustering_approach,
+        params,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        result
 ):
     # Check if the user exist
     print('!!!!!!!!!!! CSV PARSER !!!!!!!!')
-
+    collection = params.collection
     await user_exists(current_user.username)
     # Check if the collection exist
     collection_db = await collection_exists(current_user.username, collection)
@@ -74,10 +76,27 @@ async def post_clusters(
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
-            # add the file to the hash list
+
             await user_collection.update_one(
                 {"username": current_user.username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}},
+                {
+                    "$push": {
+                        "collections.$.files_hash": file_hash,
+                    },
+                    "$set": {
+                        "collections.$.clustering_parameters": {
+                            "Epsilon": params.epsilon,
+                            "min_samples": params.min_samples,
+                            "nbr_clusters": params.nbr_clusters,
+                            "linkage": params.linkage,
+                        },
+                        "collections.$.file_name": file_name,
+                        "collections.$.clustering_approach": clustering_approach,
+                        "collections.$.clustering_result": result
+                    }
+
+                },
+                upsert=False
             )
             list_file_write.append(filename)
     # If all files have already been parsed, return an error

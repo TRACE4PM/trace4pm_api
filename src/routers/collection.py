@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.params import Depends
 
-from ..collection_utils import get_all_collections, get_collections_names
+from ..collection_utils import get_log_collections, get_cluster_collections,get_collections_names
 from ..database.config import database, user_collection
 from ..models.collection import *
 from ..models.users import User_Model
@@ -22,22 +22,35 @@ router = APIRouter(prefix="/collection", tags=["collection"])
 async def create_collection(
     collection: Collection_Create_Model,
     current_user: Annotated[User_Model, Depends(get_current_active_user)],
-) -> Collection_Model:
+) :
     collection.name = collection.name
-    # check if user exist
+    # check if user exists
     await user_exists(current_user.username)
-    # Check if collection name already exist
+    # Check if collection name already exists
     if collection.name in await get_collections_names(current_user.username):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Collection already exist, please choose another name",
+            detail="Collection already exists, please choose another name",
         )
 
-    coll = Collection_Model(
-        **collection.dict(),
-        created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
-        files_hash=[]
-    )
+    # Ensure coll is always defined
+    if collection.log_collection:
+        coll = Collection_Model(
+            **collection.dict(),
+            created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
+            files_hash=[]
+        )
+    else:
+        coll = Clustering_Collection_Model(
+            **collection.dict(),
+            created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
+            file_name=None,
+            files_hash=[],
+            clustering_approach= None,
+            clustering_parameters= [],
+            clustering_result=[]
+        )
+
     # Add collection to user collections
     await user_collection.update_one(
         {"username": current_user.username},
@@ -50,12 +63,20 @@ async def create_collection(
 
 # Route to get the list of collections in database
 # Return a list of collections with the status code 200
-@router.get("/", status_code=status.HTTP_200_OK)
-async def list_collections(
+@router.get("/list_log_collections", status_code=status.HTTP_200_OK)
+async def list_log_collections(
     current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ) -> list[Collection_Model]:
-    collections = await get_all_collections(current_user.username)
+    collections = await get_log_collections(current_user.username)
     return collections
+
+@router.get("/list_cluster_collections", status_code=status.HTTP_200_OK)
+async def list_cluster_collections(
+    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+) -> list[Clustering_Collection_Model]:
+    collections = await get_cluster_collections(current_user.username)
+    return collections
+
 
 
 # Route to delete a collection in database

@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
 from .database.config import database, user_collection
-from .models.collection import Collection_Model
+from .models.collection import Collection_Model, Clustering_Collection_Model
 
 async def collection_exists(username: str, collection: str):
     if collection not in await get_collections_names(username):
@@ -21,13 +21,27 @@ async def get_collections_names(username: str) -> list[str]:
 
 # Function to list the collections of a user
 # Return a list of collections
-async def get_all_collections(username: str) -> list[Collection_Model]:
+async def get_log_collections(username: str) -> list[Collection_Model]:
     document = await user_collection.find_one({"username": username}, {"_id": 0})
     if not document:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
-    return collections
+    log_collections = [collection for collection in collections if collection.get("log_collection")]
+
+    return log_collections
+
+
+async def get_cluster_collections(username: str) -> list[Clustering_Collection_Model]:
+    document = await user_collection.find_one({"username": username}, {"_id": 0})
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
+    collections = document["collections"]
+    print("collections ", collections)
+    cluster_collections = [collection for collection in collections if not collection.get("log_collection")]
+    print("cluster docs", cluster_collections)
+    return cluster_collections
 
 
 # Function to get a collection-object by name

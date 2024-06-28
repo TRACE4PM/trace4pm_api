@@ -59,7 +59,7 @@ async def trace_based(
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
 
-        await post_clusters(files_paths, params.collection, current_user)
+        await post_clusters(files_paths,None, 'Trace Based Clustering', params, current_user, result)
         return result
     except HTTPException as e:
         raise e
@@ -106,8 +106,7 @@ async def vector_representation(
             if filename.startswith("cluster_log_"):
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
-        await post_clusters(files_paths, params.collection, current_user)
-
+        await post_clusters(files_paths, None, 'Feature Based Clustering', params, current_user, result)
         return result
     except HTTPException as e:
         raise e
