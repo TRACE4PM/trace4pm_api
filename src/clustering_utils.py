@@ -21,11 +21,15 @@ from .utils import compute_sha256
 
 async def post_clusters(
         files, file_name,
-        clustering_approach,
+        col_parameters,
         params,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
         result
 ):
+    """
+    parsing the cluster files to save the results and methods used as a history in the database
+
+    """
     # Check if the user exist
     print('!!!!!!!!!!! CSV PARSER !!!!!!!!')
     collection = params.collection
@@ -76,28 +80,57 @@ async def post_clusters(
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
+            clustering_approach = col_parameters['clustering approach']
 
-            await user_collection.update_one(
-                {"username": current_user.username, "collections.name": collection},
-                {
-                    "$push": {
-                        "collections.$.files_hash": file_hash,
-                    },
-                    "$set": {
-                        "collections.$.clustering_parameters": {
-                            "Epsilon": params.epsilon,
-                            "min_samples": params.min_samples,
-                            "nbr_clusters": params.nbr_clusters,
-                            "linkage": params.linkage,
+            # specifying the parameters to add to the collection based on the clustering approach used
+            if clustering_approach == 'Feature Based Clustering':
+                await user_collection.update_one(
+                    {"username": current_user.username, "collections.name": collection},
+                    {
+                        "$push": {
+                            "collections.$.files_hash": file_hash,
                         },
-                        "collections.$.file_name": file_name,
-                        "collections.$.clustering_approach": clustering_approach,
-                        "collections.$.clustering_result": result
-                    }
+                        "$set": {
+                            "collections.$.clustering_parameters": {
+                                "Vector representation": col_parameters['Vector representation'],
+                                'Clustering algorithm': col_parameters['Clustering algorithm'],
+                                "Distance measure" : params.distance,
+                                "Epsilon": params.epsilon,
+                                "min_samples": params.min_samples,
+                                "nbr_clusters": params.nbr_clusters,
+                                "linkage": params.linkage,
+                            },
+                            "collections.$.file_name": col_parameters["Logfile name"],
+                            "collections.$.clustering_approach": clustering_approach,
+                            "collections.$.clustering_result": result
+                        }
 
-                },
-                upsert=False
-            )
+                    },
+                    upsert=False
+                )
+            else:
+                await user_collection.update_one(
+                    {"username": current_user.username, "collections.name": collection},
+                    {
+                        "$push": {
+                            "collections.$.files_hash": file_hash,
+                        },
+                        "$set": {
+                            "collections.$.clustering_parameters": {
+                                'Clustering algorithm': col_parameters['Clustering algorithm'],
+                                "Epsilon": params.epsilon,
+                                "min_samples": params.min_samples,
+                                "nbr_clusters": params.nbr_clusters,
+                                "linkage": params.linkage,
+                            },
+                            "collections.$.file_name": file_name,
+                            "collections.$.clustering_approach": clustering_approach,
+                            "collections.$.clustering_result": result
+                        }
+
+                    },
+                    upsert=False
+                )
             list_file_write.append(filename)
     # If all files have already been parsed, return an error
     if not list_file_write:

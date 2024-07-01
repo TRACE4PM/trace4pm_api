@@ -1,3 +1,5 @@
+from typing import Any
+
 from fastapi import HTTPException, status
 from .database.config import database, user_collection
 from .models.collection import Collection_Model, Clustering_Collection_Model
@@ -38,9 +40,7 @@ async def get_cluster_collections(username: str) -> list[Clustering_Collection_M
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
-    print("collections ", collections)
     cluster_collections = [collection for collection in collections if not collection.get("log_collection")]
-    print("cluster docs", cluster_collections)
     return cluster_collections
 
 
@@ -69,4 +69,13 @@ async def purge_collection(collection_db):
     """
 
     await collection_db.delete_many({})
+
+
+def remove_null_values(data: Any) -> Any:
+    if isinstance(data, dict):
+        return {k: remove_null_values(v) for k, v in data.items() if v is not None}
+    elif isinstance(data, list):
+        return [remove_null_values(item) for item in data if item is not None]
+    else:
+        return data
 

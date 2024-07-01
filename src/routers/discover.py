@@ -103,7 +103,7 @@ async def alphaminer_algo_quality(fitness_approach: Quality_Type,
 
         results, zip = await alpha_algo_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                 fitness_approach.lower(), precision_approach.lower())
-        return results, zip
+        return FileResponse(zip, media_type="application/zip", filename="Model_Quality.zip")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -164,7 +164,7 @@ async def alpha_miner_plus_qual(fitness_approach: Quality_Type,
 
         results, zip = await alpha_miner_plus_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                       fitness_approach.lower(), precision_approach.lower())
-        return results, zip
+        return FileResponse(zip, media_type="application/zip", filename="Model_Quality.zip")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -255,8 +255,8 @@ async def heuristic_miner_to_petrinet(fitness_approach: Quality_Type,
 
         results, zip_path = await heuristic_miner_petri(temp_file_path, case_name, concept_name, timestamp, separator,
                                                          fitness_approach.lower(), precision_approach.lower())
-        logger.info(f"heuristic_miner_petri executed in {time.time() - start_time:.2f} seconds")
-        return results, zip_path
+
+        return FileResponse(zip_path, media_type="application/zip", filename="Model_Quality.zip")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -324,7 +324,7 @@ async def inductive_miner_qual(fitness_approach: Quality_Type,
         results, zip = await inductive_miner_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                      noise_threshold, fitness_approach.lower(),
                                                      precision_approach.lower())
-        return results, zip
+        return FileResponse(zip, media_type="application/zip", filename="Model_Quality.zip")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
@@ -436,7 +436,8 @@ async def dfg_to_petrinet_quality(fitness_approach: Quality_Type,
 
         results, zip = await dfg_petri_quality(temp_file_path, case_name, concept_name, timestamp, separator,
                                                fitness_approach.lower(), precision_approach.lower())
-        return results, zip
+
+        return FileResponse(zip, media_type="application/zip", filename="Model_Quality.zip")
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:
