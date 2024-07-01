@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.params import Depends
 
-from ..collection_utils import get_log_collections, get_cluster_collections,get_collections_names
+from ..collection_utils import get_log_collections, get_cluster_collections, get_collections_names, remove_null_values
 from ..database.config import database, user_collection
 from ..models.collection import *
 from ..models.users import User_Model
@@ -20,9 +20,9 @@ router = APIRouter(prefix="/collection", tags=["collection"])
 # Return the collection created with the status code 201
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_collection(
-    collection: Collection_Create_Model,
-    current_user: Annotated[User_Model, Depends(get_current_active_user)],
-) :
+        collection: Collection_Create_Model,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+):
     collection.name = collection.name
     # check if user exists
     await user_exists(current_user.username)
@@ -38,6 +38,7 @@ async def create_collection(
         coll = Collection_Model(
             **collection.dict(),
             created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
+            file_name=None,
             files_hash=[]
         )
     else:
@@ -46,8 +47,8 @@ async def create_collection(
             created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
             file_name=None,
             files_hash=[],
-            clustering_approach= None,
-            clustering_parameters= [],
+            clustering_approach=None,
+            clustering_parameters=[],
             clustering_result=[]
         )
 
@@ -61,30 +62,32 @@ async def create_collection(
     return coll
 
 
-# Route to get the list of collections in database
+# Route to get the list of log collections in database
 # Return a list of collections with the status code 200
 @router.get("/list_log_collections", status_code=status.HTTP_200_OK)
 async def list_log_collections(
-    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ) -> list[Collection_Model]:
     collections = await get_log_collections(current_user.username)
+    print(collections)
     return collections
 
+
+# Route to return a list of cluster collections in the database
 @router.get("/list_cluster_collections", status_code=status.HTTP_200_OK)
 async def list_cluster_collections(
-    current_user: Annotated[User_Model, Depends(get_current_active_user)]
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ) -> list[Clustering_Collection_Model]:
     collections = await get_cluster_collections(current_user.username)
     return collections
-
 
 
 # Route to delete a collection in database
 # Return a success message with the status code 200
 @router.delete("/", status_code=status.HTTP_200_OK)
 async def delete_collection(
-    current_user: Annotated[User_Model, Depends(get_current_active_user)],
-    collection: str,
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        collection: str,
 ) -> dict:
     # check if user exist
     await user_exists(current_user.username)

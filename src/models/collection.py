@@ -12,10 +12,9 @@ class Collection_Base_Model(Base_model):
 class Collection_Model(Collection_Base_Model):
     created_at: str | None = None
     files_hash: list[str] | None = None
-
+    file_name: str | None = None
 
 class Clustering_Collection_Model(Collection_Model):
-    file_name: str | None = None
     clustering_approach: str | None = None
     clustering_parameters: Optional[Dict] = None
     clustering_result: Optional[Dict] = None

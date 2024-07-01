@@ -29,19 +29,26 @@ async def get_log_collections(username: str) -> list[Collection_Model]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
+    print(collections)
     log_collections = [collection for collection in collections if collection.get("log_collection")]
 
     return log_collections
 
 
 async def get_cluster_collections(username: str) -> list[Clustering_Collection_Model]:
+    print("get clusering collection")
     document = await user_collection.find_one({"username": username}, {"_id": 0})
     if not document:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
+    print("collections",collections)
     cluster_collections = [collection for collection in collections if not collection.get("log_collection")]
-    return cluster_collections
+    print("cluster_collections",cluster_collections)
+    collections_dicts = [collection for collection in cluster_collections]
+    print("collections_dicts", collections_dicts)
+    filtered_collections = [remove_null_values(collection) for collection in collections_dicts]
+    return filtered_collections
 
 
 # Function to get a collection-object by name

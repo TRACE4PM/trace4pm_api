@@ -23,10 +23,10 @@ router = APIRouter(
 )
 
 
-@router.post("/trace/")
+@router.post("/trace_based/")
 async def trace_based(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        algorithm: ClusteringMethod, linkage: LinkageCriteria,params: ClusteringParams = Depends(), file: UploadFile = File(...)):
+        algorithm: ClusteringMethod, linkage: LinkageCriteria,params: ClusteringParams = Depends(),logfile_name: str= None, file: UploadFile = File(...)):
     """
         Trace based clustering using levenshtein distance measure, and choosing the clustering algorithm and
         the parameters for each algorithm
@@ -59,7 +59,13 @@ async def trace_based(
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
 
-        await post_clusters(files_paths,None, 'Trace Based Clustering', params, current_user, result)
+        col_parameters = {
+            "clustering approach": 'Trace Based Clustering',
+            "Clustering algorithm": algorithm,
+            "Logfile name": logfile_name,
+
+        }
+        await post_clusters(files_paths,col_parameters, params, current_user, result)
         return result
     except HTTPException as e:
         raise e
@@ -71,7 +77,7 @@ async def trace_based(
 async def vector_representation(
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
         clustering_method: ClusteringMethod, linkage: LinkageCriteria, vector_representation: VectorRepresentation, distance : DistanceMeasure,
-        params: ClusteringParams = Depends(), file: UploadFile = File(...)):
+        params: ClusteringParams = Depends(), logfile_name: str= None,file: UploadFile = File(...)):
     """
         Feature based clustering by representing the data as binary vectors, frequency vectors or relative
         frequency vectors
@@ -106,7 +112,15 @@ async def vector_representation(
             if filename.startswith("cluster_log_"):
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
-        await post_clusters(files_paths, None, 'Feature Based Clustering', params, current_user, result)
+
+        col_parameters = {
+            "clustering approach": 'Feature Based Clustering',
+            "Vector representation": vector_representation,
+            "Clustering algorithm": clustering_method,
+            "Logfile name": logfile_name,
+
+        }
+        await post_clusters(files_paths, col_parameters,params, current_user, result)
         return result
     except HTTPException as e:
         raise e

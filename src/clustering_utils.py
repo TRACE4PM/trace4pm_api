@@ -20,7 +20,7 @@ from .utils import compute_sha256
 
 
 async def post_clusters(
-        files, file_name,
+        files,
         col_parameters,
         params,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
@@ -81,7 +81,7 @@ async def post_clusters(
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
             clustering_approach = col_parameters['clustering approach']
-
+            print("col parameters", col_parameters)
             # specifying the parameters to add to the collection based on the clustering approach used
             if clustering_approach == 'Feature Based Clustering':
                 await user_collection.update_one(
@@ -123,7 +123,7 @@ async def post_clusters(
                                 "nbr_clusters": params.nbr_clusters,
                                 "linkage": params.linkage,
                             },
-                            "collections.$.file_name": file_name,
+                            "collections.$.file_name": col_parameters["Logfile name"],
                             "collections.$.clustering_approach": clustering_approach,
                             "collections.$.clustering_result": result
                         }
@@ -132,6 +132,7 @@ async def post_clusters(
                     upsert=False
                 )
             list_file_write.append(filename)
+
     # If all files have already been parsed, return an error
     if not list_file_write:
         raise HTTPException(
