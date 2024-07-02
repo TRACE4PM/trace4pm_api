@@ -40,12 +40,9 @@ router = APIRouter(
 
 @router.post("/alpha-miner/")
 async def alpha_miner_algorithm(
-        current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        collection: str,
         case_name: str = "client_id",
         concept_name: str = "action",
-        timestamp: str = 'timestamp', separator: str = ";",
-      ):
+        timestamp: str = 'timestamp', separator: str = ";",file: UploadFile = File(...)):
     """
           Applying Alpha Miner algorithm on a log file and saving the model in a png file
         Args:
@@ -55,25 +52,16 @@ async def alpha_miner_algorithm(
             petri net, initial marking and final marking
            """
     try:
+        file_content = await file.read()
+        file_extension = os.path.splitext(file.filename)[1]
 
-        collection_db = await collection_exists(current_user.username, collection)
+        with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
+            temp_file.write(file_content)
+            temp_file_path = temp_file.name
 
-        json_obj = []
-        async for doc in collection_db.find({}, {"_id": 0}):
-            json_obj.append(doc)  # Directly append the document
-
-        print(json_obj)
-        # file_content = await file.read()
-        # file_extension = os.path.splitext(file.filename)[1]
-        #
-        # with tempfile.NamedTemporaryFile(delete=False, suffix=file_extension) as temp_file:
-        #     temp_file.write(file_content)
-        #     temp_file_path = temp_file.name
-        #
-        # log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(temp_file_path, case_name,separator, )
-
-        # return collection_db['files_hash']
-
+        log, net, initial_marking, final_marking, output_path = await alpha_miner_algo(temp_file_path, case_name,
+                                                                                       concept_name, timestamp, separator)
+        return FileResponse(output_path)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     except Exception as e:

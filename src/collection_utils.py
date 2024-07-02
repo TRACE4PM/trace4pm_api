@@ -7,7 +7,9 @@ from .models.collection import Collection_Model, Clustering_Collection_Model
 async def collection_exists(username: str, collection: str):
     if collection not in await get_collections_names(username):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist")
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Collection doesn't exist"
+        )
     else:
         return database.get_collection(collection)
 
@@ -18,6 +20,7 @@ async def get_collections_names(username: str) -> list[str]:
     async for names in user_collection.find({"username": username}, {"_id": 0, "collections.name": 1}):
         for name in names["collections"]:
             list_names.append(name["name"])
+    print("names",list_names)
     return list_names
 
 
@@ -29,24 +32,18 @@ async def get_log_collections(username: str) -> list[Collection_Model]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
-    print(collections)
     log_collections = [collection for collection in collections if collection.get("log_collection")]
-
     return log_collections
 
 
 async def get_cluster_collections(username: str) -> list[Clustering_Collection_Model]:
-    print("get clusering collection")
     document = await user_collection.find_one({"username": username}, {"_id": 0})
     if not document:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
-    print("collections",collections)
     cluster_collections = [collection for collection in collections if not collection.get("log_collection")]
-    print("cluster_collections",cluster_collections)
     collections_dicts = [collection for collection in cluster_collections]
-    print("collections_dicts", collections_dicts)
     filtered_collections = [remove_null_values(collection) for collection in collections_dicts]
     return filtered_collections
 

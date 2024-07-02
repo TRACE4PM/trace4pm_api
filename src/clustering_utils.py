@@ -36,7 +36,7 @@ async def post_clusters(
     await user_exists(current_user.username)
     # Check if the collection exist
     collection_db = await collection_exists(current_user.username, collection)
-
+    print("collect", collection_db)
     if collection_db is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -81,7 +81,6 @@ async def post_clusters(
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
             clustering_approach = col_parameters['clustering approach']
-            print("col parameters", col_parameters)
             # specifying the parameters to add to the collection based on the clustering approach used
             if clustering_approach == 'Feature Based Clustering':
                 await user_collection.update_one(

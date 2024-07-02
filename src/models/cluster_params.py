@@ -19,6 +19,7 @@ class DistanceMeasure(str, Enum):
     Jaccard = "Jaccard"
     Hamming = "Hamming"
     Cosine = "Cosine"
+    Euclidean = "Euclidean"
 
 class LinkageCriteria(str, Enum):
     Single = "Single"
@@ -60,13 +61,10 @@ class FssClusteringParams(Base_model):
         nbr_cluster and linkage critetia for agglomerative algorithm
         distance: distance measure for feature based clustering,
     """
-    distance: Optional[FssDistanceMeasure]
-    epsilon: Optional[float] = None
-    min_samples: Optional[int] = None
     nbr_clusters: Optional[int] = None
     linkage: Optional[str] = None
     min_support: Optional[int] = 99
-    min_length: Optional[int] = 9
+    min_length: Optional[int] = 2
     collection: Optional[str] = None
 
 

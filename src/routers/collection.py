@@ -69,7 +69,6 @@ async def list_log_collections(
         current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ) -> list[Collection_Model]:
     collections = await get_log_collections(current_user.username)
-    print(collections)
     return collections
 
 

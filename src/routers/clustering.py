@@ -133,10 +133,9 @@ async def vector_representation(
 #  FSS encoding takes too much time, trying to fix it
 @router.post("/feature_based/fss")
 async def fss_encoding(
-    current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        # clustering_method: ClusteringMethodFss, linkage: LinkageCriteria,
-        collection : str,
-        nbr_clusters : int, min_support: int = 99, min_length: int = 9,file: UploadFile = File(...)):
+        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        params : FssClusteringParams  = Depends(),
+        logfile_name: str= None,file: UploadFile = File(...)):
     """
     Feature based clustering where the data are encoded using the improved FSS encoding approach
 
@@ -154,7 +153,8 @@ async def fss_encoding(
         decode = io.StringIO(file_content.decode('utf-8'))
         # chosing the clustering algorithm and performing clustering on fss encoding vectors
         # if linkage == "Ward" and params.distance == "Euclidean":
-        nb = fss_euclidean_distance(decode, nbr_clusters, min_support, min_length)
+        result,nb = fss_euclidean_distance(decode, params, params.min_support, params.min_length)
+        result["Number of traces"] = nb["Number of traces"]
         # else:
         #     result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
         # result["Number of traces"] = nb["Number of traces"]
@@ -165,8 +165,16 @@ async def fss_encoding(
             if filename.startswith("cluster_log_"):
                 file_path = os.path.join(log_directory, filename)
                 files_paths.append(file_path)
-        await post_clusters(files_paths, collection, current_user)
-        return nb
+
+        col_parameters = {
+            "clustering approach": 'Feature Based Clustering',
+            "Vector representation": 'FSS Encoding',
+            "Clustering algorithm": 'Agglomerative',
+            "Logfile name": logfile_name,
+
+        }
+        # await post_clusters(files_paths, col_parameters, params, current_user, result)
+        return result
     except HTTPException as e:
         raise e
     except Exception as e:
