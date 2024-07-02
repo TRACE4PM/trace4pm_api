@@ -86,10 +86,12 @@ async def post_log_file(
             # add the file to the hash list
             await user_collection.update_one(
                 {"username": current_user.username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}},
-                {"$set": {"collections.$.file_name": file.filename}}
+                {
+                    "$push": {"collections.$.files_hash": file_hash},
+                    "$set": {"collections.$.file_name": file.filename},
+                },
+                upsert=False
             )
-
             list_file_write.append(file.filename)
 
     # If all files have already been parsed, return an error
@@ -164,7 +166,7 @@ async def post_csv_file(
             f.write(content)
 
         file_hash = await compute_sha256(file_path)
-
+        print(file.filename)
         # check if file have already been parsed
         if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(file.filename)
@@ -201,9 +203,11 @@ async def post_csv_file(
             # add the file to the hash list
             await user_collection.update_one(
                 {"username": current_user.username, "collections.name": collection},
-                {"$push": { "collections.$.files_hash": file_hash}},
-                {"$set": {"collections.$.file_name": file.filename}
-                 }
+                {
+                    "$push": { "collections.$.files_hash": file_hash},
+                "$set": {"collections.$.file_name": file.filename},
+                },
+                upsert=False
             )
             list_file_write.append(file.filename)
 
