@@ -44,8 +44,9 @@ class ClusteringParams(Base_model):
     min_samples: Optional[int] = None
     nbr_clusters: Optional[int] = None
     linkage: Optional[str] = None
-    distance:Optional[str] = None
+    distance: Optional[str] = None
     collection: Optional[str] = None
+    timestamp_format : Optional[str] = "%Y-%m-%d %H:%M:%S"
 
 
 class FssDistanceMeasure(str, Enum):
@@ -62,10 +63,10 @@ class FssClusteringParams(Base_model):
         distance: distance measure for feature based clustering,
     """
     nbr_clusters: Optional[int] = None
-    linkage: Optional[str] = None
     min_support: Optional[int] = 99
     min_length: Optional[int] = 2
     collection: Optional[str] = None
+    timestamp_format: Optional[str] = "%Y-%m-%d %H:%M:%S"
 
 
 class ClientSessionDurationResponse(Base_model):

@@ -55,7 +55,7 @@ async def post_clusters(
     tmp = CsvParameters(
         separator=";",
         timestamp_column="timestamp",
-        timestamp_format="%Y-%m-%d %H:%M:%S",
+        timestamp_format= params.timestamp_format,
         action_column="action",
         session_id_column="client_id",
         session_time_limit=3600,
