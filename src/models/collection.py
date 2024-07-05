@@ -25,3 +25,8 @@ class Collection_Create_Model(Collection_Base_Model):
 
     class Config:
         pass
+
+
+class ClientSessionDurationResponse(Base_model):
+    client_id: str
+    average_duration_seconds: float
