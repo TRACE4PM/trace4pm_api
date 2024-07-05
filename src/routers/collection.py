@@ -90,7 +90,6 @@ async def delete_collection(
 ) -> dict:
     # check if user exist
     await user_exists(current_user.username)
-    collection = collection.lower()
     if collection not in await get_collections_names(current_user.username):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist"
