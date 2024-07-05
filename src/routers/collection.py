@@ -39,7 +39,9 @@ async def create_collection(
             **collection.dict(),
             created_at=datetime.strftime(datetime.now(), "%d/%m/%Y %H:%M:%S"),
             file_name=None,
-            files_hash=[]
+            files_hash=[],
+            timestamp_format= None
+
         )
     else:
         coll = Clustering_Collection_Model(

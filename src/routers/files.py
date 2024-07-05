@@ -205,7 +205,8 @@ async def post_csv_file(
                 {"username": current_user.username, "collections.name": collection},
                 {
                     "$push": { "collections.$.files_hash": file_hash},
-                "$set": {"collections.$.file_name": file.filename},
+                "$set": {"collections.$.file_name": file.filename,
+                         "collections.$.timestamp_format": timestamp_format},
                 },
                 upsert=False
             )

@@ -13,6 +13,8 @@ class Collection_Model(Collection_Base_Model):
     created_at: str | None = None
     files_hash: list[str] | None = None
     file_name: str | None = None
+    timestamp_format: Optional[str] | None = None
+
 
 class Clustering_Collection_Model(Collection_Model):
     clustering_approach: str | None = None

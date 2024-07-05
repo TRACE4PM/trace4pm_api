@@ -28,13 +28,13 @@ async def post_clusters(
 ):
     """
     parsing the cluster files to save the results and methods used as a history in the database
-
     """
-    # Check if the user exist
+    # Check if the user exists
     print('!!!!!!!!!!! CSV PARSER !!!!!!!!')
     collection = params.collection
     await user_exists(current_user.username)
-    # Check if the collection exist
+
+    # Check if the collection exists
     collection_db = await collection_exists(current_user.username, collection)
     print("collect", collection_db)
     if collection_db is None:
@@ -55,7 +55,7 @@ async def post_clusters(
     tmp = CsvParameters(
         separator=";",
         timestamp_column="timestamp",
-        timestamp_format= params.timestamp_format,
+        timestamp_format=params.timestamp_format,
         action_column="action",
         session_id_column="client_id",
         session_time_limit=3600,
@@ -63,11 +63,10 @@ async def post_clusters(
     )
 
     for file in files:
-
         filename = os.path.basename(file)
         file_hash = await compute_sha256(file)
 
-        # check if file have already been parsed
+        # Check if file has already been parsed
         if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(filename)
         else:
@@ -81,27 +80,23 @@ async def post_clusters(
                 if "unconverted data remains when parsing" in str(e):
                     raise HTTPException(
                         status_code=status.HTTP_400_BAD_REQUEST,
-                        detail=f"You passed the wrong date format"
+                        detail="You passed the wrong date format"
                     )
                 else:
                     raise
+
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
+
             clustering_approach = col_parameters['clustering approach']
-            vector_rep = col_parameters['Vector representation']
-            print(vector_rep)
-            print("parameters ", col_parameters)
-            # specifying the parameters to add to the collection based on the clustering approach used
-            clustering_approach = col_parameters['clustering approach']
-            # specifying the parameters to add to the collection based on the clustering approach used
+
+            # Specifying the parameters to add to the collection based on the clustering approach used
             if clustering_approach == 'Feature Based Clustering':
                 await user_collection.update_one(
                     {"username": current_user.username, "collections.name": collection},
                     {
-                        "$push": {
-                            "collections.$.files_hash": file_hash,
-                        },
+                        "$push": {"collections.$.files_hash": file_hash},
                         "$set": {
                             "collections.$.clustering_parameters": {
                                 "Vector representation": col_parameters['Vector representation'],
@@ -116,7 +111,6 @@ async def post_clusters(
                             "collections.$.clustering_approach": clustering_approach,
                             "collections.$.clustering_result": result
                         }
-
                     },
                     upsert=False
                 )
@@ -124,9 +118,7 @@ async def post_clusters(
                 await user_collection.update_one(
                     {"username": current_user.username, "collections.name": collection},
                     {
-                        "$push": {
-                            "collections.$.files_hash": file_hash,
-                        },
+                        "$push": {"collections.$.files_hash": file_hash},
                         "$set": {
                             "collections.$.clustering_parameters": {
                                 'Clustering algorithm': col_parameters['Clustering algorithm'],
@@ -139,7 +131,6 @@ async def post_clusters(
                             "collections.$.clustering_approach": clustering_approach,
                             "collections.$.clustering_result": result
                         }
-
                     },
                     upsert=False
                 )
@@ -151,7 +142,6 @@ async def post_clusters(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="All files have already been parsed",
         )
-
     else:
         return {
             "message": "File(s) added to the collection",
