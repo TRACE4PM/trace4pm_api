@@ -71,15 +71,28 @@ async def post_clusters(
         if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(filename)
         else:
-            # Parse the file
-            list_client = await get_clients_from_collection(collection_db)
-            list_client = csv_parser(
-                file=file, collection=list_client, parameters=tmp  # type: ignore
-            )
-
+            try:
+                # Parse the file
+                list_client = await get_clients_from_collection(collection_db)
+                list_client = csv_parser(
+                    file=file, collection=list_client, parameters=tmp  # type: ignore
+                )
+            except ValueError as e:
+                if "unconverted data remains when parsing" in str(e):
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"You passed the wrong date format"
+                    )
+                else:
+                    raise
             # Add the clients to the collection
             await post_clients_in_collection(list_client, collection_db)  # type: ignore
             os.remove(file)
+            clustering_approach = col_parameters['clustering approach']
+            vector_rep = col_parameters['Vector representation']
+            print(vector_rep)
+            print("parameters ", col_parameters)
+            # specifying the parameters to add to the collection based on the clustering approach used
             clustering_approach = col_parameters['clustering approach']
             # specifying the parameters to add to the collection based on the clustering approach used
             if clustering_approach == 'Feature Based Clustering':
@@ -93,7 +106,7 @@ async def post_clusters(
                             "collections.$.clustering_parameters": {
                                 "Vector representation": col_parameters['Vector representation'],
                                 'Clustering algorithm': col_parameters['Clustering algorithm'],
-                                "Distance measure" : params.distance,
+                                "Distance measure": params.distance,
                                 "Epsilon": params.epsilon,
                                 "min_samples": params.min_samples,
                                 "nbr_clusters": params.nbr_clusters,
@@ -270,3 +283,8 @@ def create_zip_file(file_paths: List[str]) -> str :
         for file_path in file_paths:
             zip_file.write(file_path, os.path.basename(file_path))
     return zip_file_path
+
+
+def filter_non_null_values(d):
+    """Return a new dictionary with only non-null values from the input dictionary."""
+    return {k: v for k, v in d.items() if v is not None}
