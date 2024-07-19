@@ -177,17 +177,6 @@ async def fetch_documents(collection_db: Any) -> List[Dict]:
     return documents
 
 
-async def fetch_documents(collection_db: Any) -> List[Dict]:
-    """Fetch documents from the collection."""
-    documents = []
-    async for doc in collection_db.find({}, {"_id": 0}):
-        documents.append(doc)
-    if not documents:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection is empty"
-        )
-    return documents
-
 def create_csv_files(documents: List[Dict], directory: str) -> List[str]:
     """Create CSV files from the json files in the collection"""
     if not os.path.exists(directory):
@@ -264,7 +253,8 @@ def create_csv_file(documents: List[Dict], cluster_id: int) -> str:
 
     return output.getvalue()
 
-def create_zip_file(file_paths: List[str]) -> str :
+
+def create_zip_file(file_paths: List[str]) -> str:
     """Create a zip file containing the CSV files."""
     temp_dir = tempfile.mkdtemp()
     zip_file_path = os.path.join(temp_dir, "clusters.zip")

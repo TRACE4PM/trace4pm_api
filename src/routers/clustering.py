@@ -31,6 +31,7 @@ async def trace_based(
         Trace based clustering using levenshtein distance measure, and choosing the clustering algorithm and
         the parameters for each algorithm
     Args:
+        logfile_name: Name of the log file on which we will perform the clustering
         clustering_method: Agglomerative or DBSCAN
         linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
         params: parameters of each clustering algorithm
@@ -82,6 +83,7 @@ async def vector_representation(
         Feature based clustering by representing the data as binary vectors, frequency vectors or relative
         frequency vectors
     Args:
+        logfile_name: Name of the log file on which we will perform the clustering
         clustering_method: Agglomerative or DBSCAN
         linkage: Linkage criteria for Agglomerative can be Average, Complete, Single with any distance measure,
         vector_representation: convert the trace to a vector representation either with Binary, Frequency based, or Relative frequency
@@ -129,58 +131,53 @@ async def vector_representation(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# TODO:
-#  FSS encoding takes too much time, trying to fix it
-@router.post("/feature_based/fss")
-async def fss_encoding(
-        current_user: Annotated[User_Model, Depends(get_current_active_user)],
-        params : FssClusteringParams  = Depends(),
-        logfile_name: str= None,file: UploadFile = File(...)):
-    """
-    Feature based clustering where the data are encoded using the improved FSS encoding approach
+# NOTE:  FSS Clustering takes tOo much time when testing with moodle data,
+# We can test this method with other files logs in the service clustering
 
-    Args:
-       file: log file
-    Returns:
-        Davis bouldin score
-        Number of clusters
-        Silhouette score of the clustering and for each cluster
+# @router.post("/feature_based/fss")
+# async def fss_encoding(
+#         current_user: Annotated[User_Model, Depends(get_current_active_user)],
+#         params : FssClusteringParams  = Depends(),
+#         logfile_name: str= None,file: UploadFile = File(...)):
+#     """
+#     Feature based clustering where the data are encoded using the improved FSS encoding approach
+#
+#     Args:
+#        file: log file
+#     Returns:
+#         Davis bouldin score
+#         Number of clusters
+#         Silhouette score of the clustering and for each cluster
+#
+#     """
+#     try :
+#         file_content = await file.read()
+#         decode = io.StringIO(file_content.decode('utf-8'))
+#         result,nb = fss_euclidean_distance(decode,params.nbr_clusters, params.min_support, params.min_length)
+#         # result["Number of traces"] = nb["Number of traces"]
+#         files_paths = []
+#         log_directory = "temp/logs"
+#         for filename in os.listdir(log_directory):
+#             if filename.startswith("cluster_log_"):
+#                 file_path = os.path.join(log_directory, filename)
+#                 files_paths.append(file_path)
+#
+#         col_parameters = {
+#             "clustering approach": 'Feature Based Clustering',
+#             "Vector representation": 'FSS Encoding',
+#             "Clustering algorithm": 'Agglomerative',
+#             "Logfile name": logfile_name,
+#
+#         }
+#         # await post_clusters(files_paths, col_parameters, params, current_user, result)
+#         return result
+#     except HTTPException as e:
+#         raise e
+#     except Exception as e:
+#         raise HTTPException(status_code=500, detail=str(e))
+#
 
-    """
-    try :
-
-        file_content = await file.read()
-        decode = io.StringIO(file_content.decode('utf-8'))
-        # chosing the clustering algorithm and performing clustering on fss encoding vectors
-        # if linkage == "Ward" and params.distance == "Euclidean":
-        result,nb = fss_euclidean_distance(decode, params, params.min_support, params.min_length)
-        result["Number of traces"] = nb["Number of traces"]
-        # else:
-        #     result,nb = feature_based_clustering(decode, clustering_method.lower(), params, params.min_support, params.min_length)
-        # result["Number of traces"] = nb["Number of traces"]
-        # result["Number unique traces"] = nb["Number unique traces"]
-        files_paths = []
-        log_directory = "temp/logs"
-        for filename in os.listdir(log_directory):
-            if filename.startswith("cluster_log_"):
-                file_path = os.path.join(log_directory, filename)
-                files_paths.append(file_path)
-
-        col_parameters = {
-            "clustering approach": 'Feature Based Clustering',
-            "Vector representation": 'FSS Encoding',
-            "Clustering algorithm": 'Agglomerative',
-            "Logfile name": logfile_name,
-
-        }
-        # await post_clusters(files_paths, col_parameters, params, current_user, result)
-        return result
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# NOTE: Will probably remove this approach later
+# TODO: Will probably remove this approach later
 
 # @router.post("/feature_based/fss_meanshift")
 # async def fss_meanshift_algo(
@@ -245,7 +242,7 @@ async def get_clusters_func( collection: str,
         documents = await fetch_documents(collection_db)
 
         # Create a directory to store the CSV files
-        directory = "src/temp/clusters"
+        directory = "temp/clusters"
         file_paths = create_csv_files(documents, directory)
 
         return {"message": "Documents have been saved as CSV files.", "file_paths": file_paths}

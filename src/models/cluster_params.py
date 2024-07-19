@@ -68,7 +68,3 @@ class FssClusteringParams(Base_model):
     collection: Optional[str] = None
     timestamp_format: Optional[str] = "%Y-%m-%d %H:%M:%S"
 
-
-class ClientSessionDurationResponse(Base_model):
-    client_id: str
-    total_duration_seconds: float
