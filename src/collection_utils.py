@@ -1,11 +1,15 @@
+from typing import Any
+
 from fastapi import HTTPException, status
 from .database.config import database, user_collection
-from .models.collection import Collection_Model
+from .models.collection import Collection_Model, Clustering_Collection_Model
 
 async def collection_exists(username: str, collection: str):
     if collection not in await get_collections_names(username):
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Collection doesn't exist")
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Collection doesn't exist"
+        )
     else:
         return database.get_collection(collection)
 
@@ -16,18 +20,32 @@ async def get_collections_names(username: str) -> list[str]:
     async for names in user_collection.find({"username": username}, {"_id": 0, "collections.name": 1}):
         for name in names["collections"]:
             list_names.append(name["name"])
+    print("names",list_names)
     return list_names
 
 
 # Function to list the collections of a user
 # Return a list of collections
-async def get_all_collections(username: str) -> list[Collection_Model]:
+async def get_log_collections(username: str) -> list[Collection_Model]:
     document = await user_collection.find_one({"username": username}, {"_id": 0})
     if not document:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
     collections = document["collections"]
-    return collections
+    log_collections = [collection for collection in collections if collection.get("log_collection")]
+    return log_collections
+
+
+async def get_cluster_collections(username: str) -> list[Clustering_Collection_Model]:
+    document = await user_collection.find_one({"username": username}, {"_id": 0})
+    if not document:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, detail="Username doesn't exist")
+    collections = document["collections"]
+    cluster_collections = [collection for collection in collections if not collection.get("log_collection")]
+    collections_dicts = [collection for collection in cluster_collections]
+    filtered_collections = [remove_null_values(collection) for collection in collections_dicts]
+    return filtered_collections
 
 
 # Function to get a collection-object by name
@@ -55,4 +73,13 @@ async def purge_collection(collection_db):
     """
 
     await collection_db.delete_many({})
+
+
+def remove_null_values(data: Any) -> Any:
+    if isinstance(data, dict):
+        return {k: remove_null_values(v) for k, v in data.items() if v is not None}
+    elif isinstance(data, list):
+        return [remove_null_values(item) for item in data if item is not None]
+    else:
+        return data
 
