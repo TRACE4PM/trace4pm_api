@@ -4,7 +4,8 @@ version = "0.1.0"
 description = ""
 authors = [
     "Axel Gohier <axel.gohier@etudiant.univ-lr.fr>",
-    "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>"
+    "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>",
+    "Ania DAHACHE <ania.dahache@univ-lr.fr>"
     ]
 readme = "README.md"
 
@@ -20,13 +21,22 @@ aiofiles = "^23.1.0"
 httpx = "^0.24.1"
 trio = "^0.22.0"
 anyio = "^3.7.0"
+pandas = "^2.2.2"
+scikit-learn = "^1.4"
+numpy = "^1.26.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 pytest = "^7.3.1"
-parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git"}
+parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git", branch = "discovery"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
 tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.git"}
-
-
+pm4py = "2.7.11.10"
+discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"}
+clustering = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}
+Levenshtein = "^0.25.1"
+pyemd = "^1.0.0"
+mlxtend = "^0.23.1"
+prefixspan = "^0.5.2"
+discovery = "^0.0.4"
 
 [tool.poetry.group.dev.dependencies]
 
