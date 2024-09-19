@@ -39,7 +39,7 @@ async def get_users() -> list[User_Model]:
 # Return a success message with the status code 201
 @router.post("/", status_code=status.HTTP_201_CREATED)
 async def create_user(user: User_Create_Model) -> User_Model:
-    user.username = user.username.lower()
+    user.username = user.username
     if await user_collection.find_one({"username": user.username}):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,

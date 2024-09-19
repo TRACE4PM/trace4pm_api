@@ -1,6 +1,8 @@
 # import aiofiles
 import json
 import os
+
+import pandas as pd
 from parser.main import parser, csv_parser
 from parser.models.csv_parameters import CsvParameters
 from parser.models.parameters import Parameters
@@ -25,7 +27,7 @@ router = APIRouter(prefix="/files", tags=["files"])
 async def post_log_file(
         files: list[UploadFile],
         collection: str,
-        current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        current_user: Annotated[User_Model, Depends(get_current_active_user)]
 ):
     """Route to send logs files to the server and add it to the collection(once parsed)
 
@@ -84,7 +86,11 @@ async def post_log_file(
             # add the file to the hash list
             await user_collection.update_one(
                 {"username": current_user.username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}},
+                {
+                    "$push": {"collections.$.files_hash": file_hash},
+                    "$set": {"collections.$.file_name": file.filename},
+                },
+                upsert=False
             )
             list_file_write.append(file.filename)
 
@@ -109,11 +115,15 @@ async def post_csv_file(
         files: list[UploadFile],
         collection: str,
         current_user: Annotated[User_Model, Depends(get_current_active_user)],
+        timestamp_column: str= "Time",timestamp_format: str= "%Y-%m-%d %H:%M:%S",
+        action_column: str= "Event name", session_id_column: str="moodleUserId",separator: str = ","
+
 ):
     """Route to send logs files to the server and add it to the collection(once parsed)
 
-
     Args:
+        current_user:
+        tmp:
         files (list[UploadFile]): A list of file to parse
         collection (str): name of the collection
 
@@ -140,11 +150,11 @@ async def post_csv_file(
     #     parser_format='%h %l %u %t "%r" %>s %b "%{Referer}i" "%{User-Agent}i"',
     # )
     tmp = CsvParameters(
-        separator=",",
-        timestamp_column="timestamp",
-        timestamp_format="%d/%m/%y, %H:%M",
-        action_column="Description",
-        session_id_column="User full name",
+        separator=separator,
+        timestamp_column=timestamp_column,
+        timestamp_format=timestamp_format,
+        action_column=action_column,
+        session_id_column=session_id_column,
         session_time_limit=3600,
     )
 
@@ -156,19 +166,34 @@ async def post_csv_file(
             f.write(content)
 
         file_hash = await compute_sha256(file_path)
-
+        print(file.filename)
         # check if file have already been parsed
         if file_hash in await get_hashed_files(current_user.username, collection):
             list_file_deleted.append(file.filename)
         else:
+            try:
+                # Read the CSV file
+                df = pd.read_csv(file_path, sep=separator)
+
+                # Validate the date format
+                pd.to_datetime(df[timestamp_column], format=timestamp_format)
+
+            except ValueError as e:
+                os.remove(file_path)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail=f"Date format or column name error in file {file.filename}.")
+            except Exception as e:
+                os.remove(file_path)
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,
+                                    detail=f"Error reading CSV file {file.filename}, wrong separator. {e}")
+
             # Parse the file
 
             list_client = await get_clients_from_collection(collection_db)
 
-            list_client = await csv_parser(
+            list_client = csv_parser(
                 file=file_path, collection=list_client, parameters=tmp  # type: ignore
             )
-
             # Remove the old clients from the collection
             await purge_collection(collection)
             # Add the client (old and new) to the collection
@@ -178,7 +203,12 @@ async def post_csv_file(
             # add the file to the hash list
             await user_collection.update_one(
                 {"username": current_user.username, "collections.name": collection},
-                {"$push": {"collections.$.files_hash": file_hash}},
+                {
+                    "$push": { "collections.$.files_hash": file_hash},
+                "$set": {"collections.$.file_name": file.filename,
+                         "collections.$.timestamp_format": timestamp_format},
+                },
+                upsert=False
             )
             list_file_write.append(file.filename)
 
