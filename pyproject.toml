@@ -5,7 +5,10 @@ description = ""
 authors = [
     "Axel Gohier <axel.gohier@etudiant.univ-lr.fr>",
     "Nannito Junior Alcime <nannito.alcime@etudiant.univ-lr.fr>",
-    "Ania DAHACHE <ania.dahache@univ-lr.fr>"
+    "Ania DAHACHE <ania.dahache@univ-lr.fr>",
+    "Marwa Trabelsi <marwa.trabelsi@univ-lr.fr>",
+    "Cyrille Suire <cyrille.suire@univ-lr.fr>",
+    "Ronan Champagnat <ronan.champagnat@univ-lr.fr>"
     ]
 readme = "README.md"
 
@@ -26,12 +29,12 @@ scikit-learn = "^1.4"
 numpy = "^1.26.4"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 pytest = "^7.3.1"
-parser = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/parser.git", branch = "discovery"}
+parser = {git = "https://github.com/TRACE4PM/parser"}
 passlib = {extras = ["bcrypt"], version = "^1.7.4"}
-tagging = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/tagging.git"}
+tagging = {git = "https://github.com/TRACE4PM/tagger"}
 pm4py = "2.7.11.10"
-discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/discovery.git"}
-clustering = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}
+discover = {git = "https://github.com/TRACE4PM/discovery"}
+clustering = {git = "https://github.com/TRACE4PM/trace_clustering"}
 Levenshtein = "^0.25.1"
 pyemd = "^1.0.0"
 mlxtend = "^0.23.1"

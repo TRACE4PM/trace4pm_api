@@ -15,11 +15,6 @@ COPY ./pyproject.toml /app/
 
 RUN pip install poetry
 
-#RUN apt-get update && apt-get install -y r-base
-#RUN apt-get update && apt-get install -y graphviz
-#RUN apt-get -yq install git
-
-
 RUN apt-get update && \
     apt-get install -y \
         libcurl4-openssl-dev \
@@ -32,9 +27,6 @@ RUN apt-get update && \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-#RUN apt-get update && apt-get install -y libxml2-dev
-#RUN apt-get update && apt-get install -y libglpk-dev
 
 # installing the necessary package for the process animation
 # takes more than 30min to install all the dependencies
