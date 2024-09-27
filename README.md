@@ -1,13 +1,12 @@
-# app
+# TRACE4PM API 
 
-## Add your files
+TRACE4PM is an API designed to model user behaviors within information systems by leveraging advanced process mining techniques. With a strong focus on trace clustering, TRACE4PM enables efficient discovery and analysis of user interaction patterns.
+The API integrates a fully automated pipeline, streamlining the process from raw data parsing to process modeling. TRACE4PM offers four dedicated micro-services:
+- Parser Service: Prepares and structures the input data, ensuring it's ready for further analysis.
+- Tagger Service: Automatically tags events with relevant metadata to enrich the process mining results.
+- Trace Clustering Service: Groups traces into meaningful clusters, facilitating deeper insights into user behavior patterns.
+- Process Modeler Service: Generates process models based on the clustered traces or on the whole event logs, providing clear visual representations of the discovered processes.
 
-```
-cd existing_repo
-git remote add origin https://gitlab.univ-lr.fr/trace_clustering/app.git
-git branch -M main
-git push -uf origin main
-```
 
 ## Installation and Configuration
 
@@ -35,7 +34,9 @@ based on their navigation traces, using process mining and different trace clust
 
 ### Author(s)
 
+    - Marwa Trablesi Hamdi
+    - Ronan Champagnat
+    - Cyrille Suire
     - Amira Ania DAHACHE
 
-### Licence
-The project is released under the L3i license.
+
