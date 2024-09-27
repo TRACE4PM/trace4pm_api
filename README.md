@@ -16,11 +16,12 @@ The API integrates a fully automated pipeline, streamlining the process from raw
 - Clone the repository to your local machine.
 - Navigate to the project directory and run the following command in your terminal to build the images and start the Docker containers:
 `docker-compose up`
+- If you are running the api on an ARM (M1) Mac, please use an x86 docker image (see the Dockerfile). This is because the cvxopt library is not yet available on ARM architectures. 
 - **Adding a New Microservice**
 - This project is based on a microservices architecture.
 To add a new microservice you have to : 
 - Add the link to the service's Git repository in the Poetry configuration file (pyproject.toml) under the [tool.poetry.dependencies] section. For example:
-`discover = {git = "https://gitlab.univ-lr.fr/trace_clustering/services/clustering.git"}`
+`discover = {git = "https://your_service_repository_url"}`
 - **Adding a New API Route**
 - Create a new Python file in the src/routers directory with the desired API.
 - Include the router in src/main.py.
