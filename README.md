@@ -36,6 +36,7 @@ based on their navigation traces, using process mining and different trace clust
 ### Author(s)
 
     - Marwa Trablesi Hamdi
+    - Noura Joudieh
     - Ronan Champagnat
     - Cyrille Suire
     - Amira Ania DAHACHE
